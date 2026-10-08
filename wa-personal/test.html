@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>WhatsApp Test</title>
+<style>
+body{font-family:system-ui;background:#111b21;color:#e9edef;padding:20px;max-width:600px;margin:auto}
+.box{background:#202c33;padding:20px;border-radius:12px;margin-bottom:16px}
+img{width:280px;height:280px;background:#fff;padding:10px;border-radius:12px}
+input,button{padding:12px;border-radius:8px;border:none;font-size:15px;font-family:inherit}
+input{width:100%;background:#2a3942;color:#fff;margin-bottom:10px;box-sizing:border-box}
+button{background:#00a884;color:#fff;cursor:pointer;font-weight:600;padding:12px 24px}
+button:hover{background:#008069}
+.msg{background:#005c4b;padding:10px 14px;border-radius:8px;margin:6px 0}
+.msg.in{background:#202c33}
+small{color:#8696a0}
+h1{margin-bottom:20px}
+</style>
+</head>
+<body>
+<h1>WhatsApp Test</h1>
+<div class="box" id="statusBox"><div id="statusText">Connecting…</div></div>
+<div class="box" id="qrBox" style="display:none">
+  <h3>Scan QR with WhatsApp</h3>
+  <p><small>Phone → Settings → Linked Devices → Link a Device</small></p>
+  <img id="qrImg"/>
+</div>
+<div class="box" id="sendBox" style="display:none">
+  <h3>Send Message</h3>
+  <input id="to" placeholder="+919876543210 (with country code)"/>
+  <input id="msg" placeholder="Message"/>
+  <button onclick="send()">Send</button>
+</div>
+<div class="box">
+  <h3>Incoming Messages</h3>
+  <div id="msgs"></div>
+</div>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+const socket = io("http://localhost:3000");
+const $ = id => document.getElementById(id);
+socket.on("connect", () => $("statusText").textContent = "Backend connected ✅");
+socket.on("disconnect", () => $("statusText").textContent = "Backend disconnected ❌");
+socket.on("status", (s) => { if (s.ready) showReady(s.me); else if (s.qr) showQR(s.qr); });
+socket.on("qr", showQR);
+socket.on("ready", showReady);
+socket.on("disconnected", () => {
+  $("statusText").textContent = "Disconnected";
+  $("qrBox").style.display = "none";
+  $("sendBox").style.display = "none";
+});
+function showQR(qr) {
+  $("statusText").textContent = "Scan QR to link";
+  $("qrBox").style.display = "block";
+  $("qrImg").src = qr;
+  $("sendBox").style.display = "none";
+}
+function showReady(me) {
+  $("statusText").textContent = "Ready as " + me.name + " ✅";
+  $("qrBox").style.display = "none";
+  $("sendBox").style.display = "block";
+}
+async function send() {
+  const to = $("to").value.trim();
+  const text = $("msg").value.trim();
+  if (!to || !text) return alert("Fill both fields");
+  const r = await fetch("http://localhost:3000/api/send", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ to, text }),
+  });
+  const d = await r.json();
+  if (d.ok) { addMsg("You: " + text, true); $("msg").value = ""; }
+  else alert("Error: " + d.error);
+}
+socket.on("message", (m) => addMsg("[" + m.senderName + "] " + m.body, false));
+function addMsg(text, out) {
+  const d = document.createElement("div");
+  d.className = "msg" + (out ? "" : " in");
+  d.textContent = text;
+  $("msgs").appendChild(d);
+}
+</script>
+</body>
+</html>

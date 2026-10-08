@@ -1,0 +1,4066 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tarunsfxo-WhatsApp</title>
+  <style>
+    :root {
+      --accent: #00a884;
+      --accent-dark: #008069;
+      --panel: #fff;
+      --panel-2: #f0f2f5;
+      --input-bg: #fff;
+      --border: #e9edef;
+      --chat-bg: #efeae2;
+      --bubble-in: #fff;
+      --bubble-out: #d9fdd3;
+      --text: #111b21;
+      --muted: #667781;
+      --hover: #f5f6f6;
+      --active: #f0f2f5;
+      --tick-read: #53bdeb;
+      --app-bg: #d1d7db;
+      --danger: #ea0038;
+      --warn: #ffb02e;
+    }
+
+    body.dark {
+      --panel: #111b21;
+      --panel-2: #202c33;
+      --input-bg: #2a3942;
+      --border: #222d34;
+      --chat-bg: #0b141a;
+      --bubble-in: #202c33;
+      --bubble-out: #005c4b;
+      --text: #e9edef;
+      --muted: #8696a0;
+      --hover: #202c33;
+      --active: #2a3942;
+      --app-bg: #0b141a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--app-bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: background .2s;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 127px;
+      background: #00a884;
+      z-index: 0
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1700px;
+      height: 100%;
+      display: flex;
+      overflow: hidden;
+      background: var(--panel);
+      box-shadow: 0 8px 34px rgba(11, 20, 26, .28);
+    }
+
+    @media(min-width:1200px) {
+      .app {
+        height: calc(100% - 38px)
+      }
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+      width: 32%;
+      min-width: 320px;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      position: relative
+    }
+
+    .sidebar-header {
+      height: 59px;
+      flex-shrink: 0;
+      background: var(--panel-2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      background: var(--panel-2);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .tab {
+      flex: 1;
+      padding: 11px 8px;
+      text-align: center;
+      font-size: 13.5px;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      user-select: none
+    }
+
+    .tab:hover {
+      color: var(--text)
+    }
+
+    .tab.active {
+      color: var(--accent-dark);
+      border-bottom-color: var(--accent-dark);
+      font-weight: 600
+    }
+
+    body.dark .tab.active {
+      color: var(--accent)
+    }
+
+    .tab svg {
+      width: 16px;
+      height: 16px
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      position: relative;
+      flex-shrink: 0
+    }
+
+    .icon-btn:hover {
+      background: rgba(134, 150, 160, .18);
+      color: var(--text)
+    }
+
+    .icon-btn svg {
+      width: 22px;
+      height: 22px
+    }
+
+    .icon-btn.sm {
+      width: 32px;
+      height: 32px
+    }
+
+    .icon-btn.sm svg {
+      width: 17px;
+      height: 17px
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      background: var(--c, #6a7175);
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      user-select: none;
+      letter-spacing: .3px;
+      overflow: hidden
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .avatar.sm {
+      width: 30px;
+      height: 30px;
+      font-size: 12px
+    }
+
+    .avatar.lg {
+      width: 120px;
+      height: 120px;
+      font-size: 42px
+    }
+
+    .search-wrap {
+      padding: 8px 12px;
+      flex-shrink: 0;
+      background: var(--panel)
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--panel-2);
+      border-radius: 8px;
+      height: 38px;
+      padding: 0 12px
+    }
+
+    .search svg {
+      width: 18px;
+      height: 18px;
+      color: var(--muted);
+      flex-shrink: 0
+    }
+
+    .search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 14.5px;
+      font-family: inherit
+    }
+
+    .search input::placeholder {
+      color: var(--muted)
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 12px 8px;
+      flex-shrink: 0
+    }
+
+    .chip {
+      padding: 5px 12px;
+      border-radius: 14px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 12.5px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      user-select: none;
+      transition: .15s
+    }
+
+    .chip:hover {
+      background: var(--hover)
+    }
+
+    .chip.active {
+      background: rgba(0, 168, 132, .15);
+      color: var(--accent-dark);
+      border-color: rgba(0, 168, 132, .4);
+      font-weight: 600
+    }
+
+    body.dark .chip.active {
+      color: var(--accent)
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden
+    }
+
+    .chat-item {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background .12s;
+      position: relative
+    }
+
+    .chat-item:hover {
+      background: var(--hover)
+    }
+
+    .chat-item.active {
+      background: var(--active)
+    }
+
+    .chat-item-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px
+    }
+
+    .chat-name {
+      font-size: 16px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .chat-name svg {
+      width: 14px;
+      height: 14px;
+      color: var(--muted);
+      flex-shrink: 0
+    }
+
+    .chat-time {
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0
+    }
+
+    .preview {
+      font-size: 13.5px;
+      color: var(--muted);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .preview .you {
+      color: var(--muted)
+    }
+
+    .preview.typing {
+      color: var(--accent-dark);
+      font-style: italic
+    }
+
+    body.dark .preview.typing {
+      color: var(--accent)
+    }
+
+    .badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      padding: 0 6px;
+      flex-shrink: 0
+    }
+
+    .badge.muted {
+      background: var(--muted)
+    }
+
+    .chat-list::-webkit-scrollbar,
+    .messages::-webkit-scrollbar,
+    .panel-scroll::-webkit-scrollbar {
+      width: 6px
+    }
+
+    .chat-list::-webkit-scrollbar-thumb,
+    .messages::-webkit-scrollbar-thumb,
+    .panel-scroll::-webkit-scrollbar-thumb {
+      background: rgba(134, 150, 160, .4);
+      border-radius: 3px
+    }
+
+    /* ---------- STATUS & CALLS LISTS ---------- */
+    .list-empty {
+      padding: 50px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    .status-item,
+    .call-item {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: background .12s
+    }
+
+    .status-item:hover,
+    .call-item:hover {
+      background: var(--hover)
+    }
+
+    .ring {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      padding: 2.5px;
+      flex-shrink: 0;
+      background: conic-gradient(var(--accent) 0 320deg, transparent 320deg);
+    }
+
+    .ring.viewed {
+      background: var(--muted)
+    }
+
+    .ring .avatar {
+      width: 100%;
+      height: 100%;
+      font-size: 15px;
+      border: 2.5px solid var(--panel)
+    }
+
+    .item-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px
+    }
+
+    .item-title {
+      font-size: 15.5px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .item-sub {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .call-item .call-type {
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .call-item .call-type svg {
+      width: 14px;
+      height: 14px;
+      color: var(--muted)
+    }
+
+    .call-item .call-type.missed svg,
+    .call-item .call-type.missed .item-sub {
+      color: var(--danger)
+    }
+
+    /* ---------- CHAT ---------- */
+    .chat {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--chat-bg);
+      background-image: radial-gradient(rgba(0, 0, 0, .045) 1px, transparent 1px);
+      background-size: 24px 24px
+    }
+
+    body.dark .chat {
+      background-image: radial-gradient(rgba(255, 255, 255, .028) 1px, transparent 1px)
+    }
+
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 18px;
+      padding: 30px;
+      background: var(--panel-2);
+      border-bottom: 6px solid var(--accent)
+    }
+
+    body.dark .empty-state {
+      background: #222e35
+    }
+
+    .empty-state svg {
+      width: 200px;
+      height: 200px;
+      opacity: .9
+    }
+
+    .empty-state h1 {
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: -.5px
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 520px
+    }
+
+    .chat-window {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    .chat-header {
+      height: 59px;
+      flex-shrink: 0;
+      background: var(--panel-2);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 16px;
+      z-index: 5;
+      border-bottom: 1px solid var(--border);
+      position: relative
+    }
+
+    .chat-header .who {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer
+    }
+
+    .chat-header .who .name {
+      font-size: 16px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .chat-header .who .name svg {
+      width: 15px;
+      height: 15px;
+      color: var(--muted)
+    }
+
+    .chat-header .who .status {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .chat-header .who .status.typing {
+      color: var(--accent)
+    }
+
+    .back-btn {
+      display: none
+    }
+
+    /* Messages */
+    .messages {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 18px 6% 14px;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth
+    }
+
+    .date-chip {
+      align-self: center;
+      margin: 8px 0 14px;
+      background: var(--bubble-in);
+      color: var(--muted);
+      font-size: 12.5px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 1px rgba(11, 20, 26, .1);
+      text-transform: uppercase;
+      letter-spacing: .4px
+    }
+
+    .msg {
+      display: flex;
+      margin-bottom: 2px;
+      animation: pop .16s ease-out;
+      position: relative
+    }
+
+    .msg.group-start {
+      margin-top: 9px
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: translateY(6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .msg.out {
+      justify-content: flex-end
+    }
+
+    .msg.selected .bubble {
+      outline: 2px solid var(--accent)
+    }
+
+    .bubble {
+      position: relative;
+      max-width: 65%;
+      background: var(--bubble-in);
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 14.5px;
+      line-height: 19.5px;
+      box-shadow: 0 1px .5px rgba(11, 20, 26, .13);
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      cursor: pointer;
+      transition: outline .1s
+    }
+
+    .msg.out .bubble {
+      background: var(--bubble-out)
+    }
+
+    .bubble.media {
+      padding: 4px
+    }
+
+    .bubble img,
+    .bubble video {
+      max-width: 100%;
+      border-radius: 6px;
+      display: block;
+      max-height: 280px;
+      cursor: pointer
+    }
+
+    .bubble .caption {
+      padding: 5px 5px 2px;
+      font-size: 14.5px
+    }
+
+    .bubble .doc {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: rgba(0, 0, 0, .04);
+      border-radius: 6px
+    }
+
+    body.dark .bubble .doc {
+      background: rgba(255, 255, 255, .05)
+    }
+
+    .bubble .doc .doc-icon {
+      width: 38px;
+      height: 44px;
+      background: var(--danger);
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    .bubble .doc .doc-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .bubble .doc .doc-info .n {
+      font-size: 13.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .bubble .doc .doc-info .s {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .bubble .loc {
+      width: 250px;
+      height: 150px;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+      display: grid;
+      place-items: center
+    }
+
+    body.dark .bubble .loc {
+      background: linear-gradient(135deg, #1b3a2f, #0f2a22)
+    }
+
+    .bubble .loc svg {
+      width: 36px;
+      height: 36px;
+      color: var(--danger);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .4))
+    }
+
+    .bubble .loc .loc-txt {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      right: 6px;
+      font-size: 12px;
+      background: rgba(0, 0, 0, .6);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px
+    }
+
+    .bubble .contact {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      background: rgba(0, 0, 0, .04);
+      border-radius: 6px;
+      min-width: 220px
+    }
+
+    body.dark .bubble .contact {
+      background: rgba(255, 255, 255, .05)
+    }
+
+    .bubble .contact .info {
+      flex: 1
+    }
+
+    .bubble .contact .info .n {
+      font-size: 14px
+    }
+
+    .bubble .contact .info .p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .bubble .poll {
+      padding: 8px 4px;
+      min-width: 230px
+    }
+
+    .bubble .poll .q {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14.5px
+    }
+
+    .bubble .poll .opt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(0, 0, 0, .08)
+    }
+
+    body.dark .bubble .poll .opt {
+      border-bottom-color: rgba(255, 255, 255, .08)
+    }
+
+    .bubble .poll .opt:last-child {
+      border: none
+    }
+
+    .bubble .poll .opt .bar {
+      flex: 1;
+      position: relative;
+      height: 20px;
+      background: rgba(0, 0, 0, .06);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    body.dark .bubble .poll .opt .bar {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    .bubble .poll .opt .bar .fill {
+      position: absolute;
+      inset: 0;
+      width: 0;
+      background: rgba(0, 168, 132, .35);
+      border-radius: 10px;
+      transition: width .3s
+    }
+
+    .bubble .poll .opt .lbl {
+      position: relative;
+      font-size: 13px;
+      padding: 0 8px;
+      line-height: 20px;
+      z-index: 1
+    }
+
+    .bubble .poll .opt .pct {
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0;
+      min-width: 32px;
+      text-align: right
+    }
+
+    .bubble .poll .opt.voted .lbl {
+      font-weight: 600
+    }
+
+    .bubble .poll .meta {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 8px
+    }
+
+    .bubble .voice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 2px;
+      min-width: 220px
+    }
+
+    .bubble .voice .play {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      cursor: pointer
+    }
+
+    .bubble .voice .play svg {
+      width: 16px;
+      height: 16px
+    }
+
+    .bubble .voice .wave {
+      flex: 1;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      gap: 2px
+    }
+
+    .bubble .voice .wave i {
+      flex: 1;
+      background: var(--muted);
+      border-radius: 1px;
+      display: block;
+      opacity: .55;
+      transition: opacity .2s
+    }
+
+    .bubble .voice.playing .wave i {
+      opacity: 1;
+      background: var(--accent-dark)
+    }
+
+    .bubble .voice .dur {
+      font-size: 12px;
+      color: var(--muted);
+      flex-shrink: 0
+    }
+
+    .bubble .reply-quote {
+      background: rgba(0, 0, 0, .06);
+      border-left: 3px solid var(--accent);
+      padding: 5px 8px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      font-size: 13px;
+      cursor: pointer
+    }
+
+    body.dark .bubble .reply-quote {
+      background: rgba(255, 255, 255, .05)
+    }
+
+    .bubble .reply-quote .who {
+      color: var(--accent-dark);
+      font-weight: 600;
+      font-size: 12.5px;
+      margin-bottom: 2px
+    }
+
+    body.dark .bubble .reply-quote .who {
+      color: var(--accent)
+    }
+
+    .bubble .reply-quote .txt {
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .msg-meta {
+      float: right;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin: 7px 0 0 9px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1;
+      white-space: nowrap
+    }
+
+    .msg-meta .tick {
+      width: 17px;
+      height: 11px;
+      color: var(--muted)
+    }
+
+    .msg-meta .tick.read {
+      color: var(--tick-read)
+    }
+
+    .msg-meta .edited {
+      font-style: italic;
+      font-size: 10.5px
+    }
+
+    .msg-meta .pin-ico {
+      width: 12px;
+      height: 12px;
+      color: var(--muted)
+    }
+
+    .reactions {
+      display: flex;
+      gap: 3px;
+      margin-top: -4px;
+      margin-bottom: 3px;
+      z-index: 1
+    }
+
+    .msg.in .reactions {
+      justify-content: flex-start;
+      padding-left: 8px
+    }
+
+    .msg.out .reactions {
+      justify-content: flex-end;
+      padding-right: 8px
+    }
+
+    .reactions .r {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1px 7px;
+      font-size: 13px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer
+    }
+
+    .reactions .r .cnt {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .reactions .r.mine {
+      background: rgba(0, 168, 132, .15);
+      border-color: var(--accent)
+    }
+
+    .star-flag {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      color: var(--warn);
+      font-size: 13px
+    }
+
+    .msg.out .star-flag {
+      right: auto;
+      left: 6px
+    }
+
+    /* Attachment preview inside composer */
+    .attach-preview {
+      background: var(--panel-2);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0
+    }
+
+    .attach-preview img,
+    .attach-preview video {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 6px
+    }
+
+    .attach-preview .doc-icon {
+      width: 42px;
+      height: 48px;
+      background: var(--danger);
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700
+    }
+
+    .attach-preview .info {
+      flex: 1;
+      min-width: 0;
+      font-size: 13.5px
+    }
+
+    .attach-preview .info .n {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .attach-preview .info .s {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px
+    }
+
+    /* Reply preview above composer */
+    .reply-preview {
+      background: var(--panel-2);
+      border-top: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      border-left: 4px solid var(--accent)
+    }
+
+    .reply-preview .info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .reply-preview .info .who {
+      font-size: 12.5px;
+      color: var(--accent-dark);
+      font-weight: 600;
+      margin-bottom: 2px
+    }
+
+    body.dark .reply-preview .info .who {
+      color: var(--accent)
+    }
+
+    .reply-preview .info .txt {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    /* Edit preview */
+    .edit-preview {
+      background: rgba(255, 176, 46, .12);
+      border-top: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      border-left: 4px solid var(--warn);
+      font-size: 13px
+    }
+
+    .edit-preview .info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .edit-preview .info .who {
+      font-size: 12.5px;
+      color: var(--warn);
+      font-weight: 600;
+      margin-bottom: 2px
+    }
+
+    /* Smart replies */
+    .smart-replies {
+      padding: 8px 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--panel-2);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .smart-replies .sr {
+      padding: 6px 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--accent-dark);
+      transition: .15s;
+      white-space: nowrap;
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    body.dark .smart-replies .sr {
+      color: var(--accent)
+    }
+
+    .smart-replies .sr:hover {
+      background: rgba(0, 168, 132, .12);
+      border-color: var(--accent)
+    }
+
+    .smart-replies .sr.ghost {
+      color: var(--muted);
+      border-style: dashed
+    }
+
+    /* Emoji / GIF / Sticker picker */
+    .emoji-bar {
+      display: none;
+      background: var(--panel-2);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      flex-direction: column;
+      max-height: 280px
+    }
+
+    .emoji-bar.open {
+      display: flex
+    }
+
+    .emoji-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      padding: 0 8px
+    }
+
+    .emoji-tabs .et {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      user-select: none
+    }
+
+    .emoji-tabs .et.active {
+      color: var(--accent-dark);
+      border-bottom-color: var(--accent-dark);
+      font-weight: 600
+    }
+
+    body.dark .emoji-tabs .et.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent)
+    }
+
+    .emoji-grid {
+      padding: 8px 12px;
+      overflow-y: auto;
+      display: grid;
+      gap: 2px
+    }
+
+    .emoji-grid.emojis {
+      grid-template-columns: repeat(auto-fill, minmax(40px, 1fr))
+    }
+
+    .emoji-grid.stickers {
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr))
+    }
+
+    .emoji-grid.gifs {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr))
+    }
+
+    .emoji-grid button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 22px;
+      height: 40px;
+      line-height: 1
+    }
+
+    .emoji-grid.stickers button {
+      font-size: 52px;
+      height: 80px
+    }
+
+    .emoji-grid.gifs button {
+      height: 90px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(120deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+      background-size: 300% 300%;
+      animation: gifAnim 4s ease infinite;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px
+    }
+
+    .emoji-grid.gifs button:nth-child(2n) {
+      background: linear-gradient(120deg, #f6d365, #fda085, #84fab0, #8fd3f4);
+      background-size: 300% 300%
+    }
+
+    .emoji-grid.gifs button:nth-child(3n) {
+      background: linear-gradient(120deg, #a18cd1, #fbc2eb, #a6c1ee, #fbc2eb);
+      background-size: 300% 300%
+    }
+
+    @keyframes gifAnim {
+
+      0%,
+      100% {
+        background-position: 0% 50%
+      }
+
+      50% {
+        background-position: 100% 50%
+      }
+    }
+
+    .emoji-grid button:hover {
+      background: rgba(134, 150, 160, .18)
+    }
+
+    .emoji-grid.gifs button:hover {
+      filter: brightness(1.08)
+    }
+
+    /* Composer */
+    .composer {
+      flex-shrink: 0;
+      background: var(--panel-2);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative
+    }
+
+    .composer input {
+      flex: 1;
+      height: 42px;
+      border: none;
+      outline: none;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--input-bg);
+      color: var(--text)
+    }
+
+    .composer input::placeholder {
+      color: var(--muted)
+    }
+
+    .send-btn {
+      color: var(--muted);
+      transition: transform .12s
+    }
+
+    .send-btn.active {
+      color: var(--accent-dark)
+    }
+
+    body.dark .send-btn.active {
+      color: var(--accent)
+    }
+
+    .send-btn.active:active {
+      transform: scale(.9)
+    }
+
+    /* Attach popover */
+    .popover {
+      position: absolute;
+      bottom: 64px;
+      left: 16px;
+      background: var(--panel);
+      border-radius: 12px;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, .3);
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 30;
+      min-width: 200px
+    }
+
+    .popover.open {
+      display: flex;
+      animation: pop .15s ease-out
+    }
+
+    .popover button {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 14.5px;
+      font-family: inherit;
+      text-align: left
+    }
+
+    .popover button:hover {
+      background: var(--hover)
+    }
+
+    .popover button svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0
+    }
+
+    .popover button:nth-child(1) svg {
+      color: #7f66ff
+    }
+
+    .popover button:nth-child(2) svg {
+      color: #007bfc
+    }
+
+    .popover button:nth-child(3) svg {
+      color: #ffbc38
+    }
+
+    .popover button:nth-child(4) svg {
+      color: #00a884
+    }
+
+    .popover button:nth-child(5) svg {
+      color: #ea0038
+    }
+
+    .popover button:nth-child(6) svg {
+      color: #f2a54c
+    }
+
+    /* Right info panel */
+    .info-panel {
+      width: 0;
+      flex-shrink: 0;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      overflow: hidden;
+      transition: width .25s;
+      display: flex;
+      flex-direction: column
+    }
+
+    .info-panel.open {
+      width: 380px
+    }
+
+    .info-panel .panel-header {
+      height: 59px;
+      flex-shrink: 0;
+      background: var(--panel-2);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 16px
+    }
+
+    .info-panel .panel-header .title {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 600
+    }
+
+    .panel-scroll {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--panel-2);
+      padding: 0 0 30px
+    }
+
+    .panel-hero {
+      background: var(--panel);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .08)
+    }
+
+    .panel-hero .name {
+      font-size: 22px;
+      font-weight: 400
+    }
+
+    .panel-hero .sub {
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    .panel-section {
+      background: var(--panel);
+      padding: 14px 20px;
+      margin-top: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .06)
+    }
+
+    .panel-section .lbl {
+      color: var(--accent-dark);
+      font-size: 13px;
+      margin-bottom: 6px
+    }
+
+    body.dark .panel-section .lbl {
+      color: var(--accent)
+    }
+
+    .panel-section .val {
+      font-size: 15px
+    }
+
+    .panel-section .desc {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+      line-height: 1.5
+    }
+
+    .panel-action {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--panel);
+      cursor: pointer;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border);
+      transition: .15s
+    }
+
+    .panel-action:hover {
+      background: var(--hover)
+    }
+
+    .panel-action.danger {
+      color: var(--danger)
+    }
+
+    .panel-action svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0
+    }
+
+    .panel-action .grow {
+      flex: 1
+    }
+
+    .panel-action .badge-toggle {
+      width: 42px;
+      height: 22px;
+      border-radius: 11px;
+      background: var(--muted);
+      position: relative;
+      transition: .2s;
+      flex-shrink: 0
+    }
+
+    .panel-action .badge-toggle::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s
+    }
+
+    .panel-action .badge-toggle.on {
+      background: var(--accent)
+    }
+
+    .panel-action .badge-toggle.on::after {
+      left: 22px
+    }
+
+    /* ---------- MODALS ---------- */
+    .modal-root {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(11, 20, 26, .7);
+      backdrop-filter: blur(2px)
+    }
+
+    .modal-root.open {
+      display: flex;
+      animation: fadeIn .15s
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    .modal {
+      background: var(--panel);
+      border-radius: 14px;
+      max-width: min(560px, 92vw);
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 14px 50px rgba(0, 0, 0, .4);
+      animation: pop .18s ease-out
+    }
+
+    .modal-head {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .modal-head .title {
+      flex: 1;
+      font-size: 18px;
+      font-weight: 600
+    }
+
+    .modal-head .sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .modal-body {
+      padding: 18px 24px;
+      overflow-y: auto;
+      flex: 1
+    }
+
+    .modal-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: var(--panel)
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: .15s
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .btn.primary:hover {
+      background: var(--accent-dark)
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--muted)
+    }
+
+    .btn.ghost:hover {
+      background: var(--hover)
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      color: #fff
+    }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .field {
+      display: block;
+      margin-bottom: 14px
+    }
+
+    .field .lbl {
+      display: block;
+      font-size: 13px;
+      color: var(--accent-dark);
+      margin-bottom: 6px
+    }
+
+    body.dark .field .lbl {
+      color: var(--accent)
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14.5px;
+      outline: none;
+      transition: .15s
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--accent)
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 70px
+    }
+
+    .member-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer
+    }
+
+    .member-row:last-child {
+      border: none
+    }
+
+    .member-row .grow {
+      flex: 1;
+      min-width: 0
+    }
+
+    .member-row .grow .n {
+      font-size: 14.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .member-row .grow .s {
+      font-size: 12.5px;
+      color: var(--muted)
+    }
+
+    .member-row .cb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: .15s
+    }
+
+    .member-row.selected .cb {
+      background: var(--accent);
+      border-color: var(--accent)
+    }
+
+    .member-row.selected .cb::after {
+      content: "✓";
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .member-row .tag {
+      font-size: 11px;
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-weight: 600
+    }
+
+    /* Call screen */
+    .call-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #0b141a;
+      color: #fff;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 20px 40px
+    }
+
+    .call-screen.open {
+      display: flex;
+      animation: fadeIn .25s
+    }
+
+    .call-screen .who-avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      font-size: 56px;
+      background: var(--c, #666);
+      display: grid;
+      place-items: center;
+      font-weight: 600;
+      box-shadow: 0 0 0 8px rgba(255, 255, 255, .08), 0 0 0 16px rgba(255, 255, 255, .04)
+    }
+
+    .call-screen .who-name {
+      font-size: 28px;
+      margin-top: 24px;
+      font-weight: 400
+    }
+
+    .call-screen .who-status {
+      color: #aaa;
+      margin-top: 6px;
+      font-size: 15px
+    }
+
+    .call-screen .video-self {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 120px;
+      height: 160px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2a3942, #111b21);
+      overflow: hidden;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, .6)
+    }
+
+    .call-screen .video-self::after {
+      content: "You";
+      position: absolute;
+      bottom: 6px;
+      left: 8px;
+      font-size: 11px;
+      color: #ccc
+    }
+
+    .call-screen .controls {
+      display: flex;
+      gap: 20px;
+      align-items: center
+    }
+
+    .call-screen .ctrl {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    .call-screen .ctrl:hover {
+      background: rgba(255, 255, 255, .25)
+    }
+
+    .call-screen .ctrl svg {
+      width: 26px;
+      height: 26px
+    }
+
+    .call-screen .ctrl.end {
+      background: var(--danger)
+    }
+
+    .call-screen .ctrl.end:hover {
+      background: #c00030
+    }
+
+    .call-screen .ctrl.off {
+      background: #fff;
+      color: #000
+    }
+
+    .call-screen .timer {
+      font-size: 15px;
+      color: #ccc;
+      margin-bottom: 20px
+    }
+
+    /* Context menu */
+    .ctx-menu {
+      position: fixed;
+      z-index: 150;
+      background: var(--panel);
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .35);
+      padding: 6px;
+      min-width: 200px;
+      display: none
+    }
+
+    .ctx-menu.open {
+      display: block;
+      animation: pop .12s ease-out
+    }
+
+    .ctx-menu button {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 14.5px;
+      font-family: inherit;
+      text-align: left
+    }
+
+    .ctx-menu button:hover {
+      background: var(--hover)
+    }
+
+    .ctx-menu button svg {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+      color: var(--muted)
+    }
+
+    .ctx-menu .sep {
+      height: 1px;
+      background: var(--border);
+      margin: 5px 4px
+    }
+
+    .ctx-menu .reactions-row {
+      display: flex;
+      gap: 2px;
+      padding: 4px 4px;
+      justify-content: space-around
+    }
+
+    .ctx-menu .reactions-row button {
+      width: 38px;
+      height: 38px;
+      justify-content: center;
+      font-size: 20px;
+      padding: 0;
+      border-radius: 50%
+    }
+
+    .ctx-menu .reactions-row button:hover {
+      background: var(--hover);
+      transform: scale(1.15)
+    }
+
+    /* Toasts */
+    .toast-root {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      max-width: 340px
+    }
+
+    .toast {
+      background: var(--panel);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 10px;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, .35);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn .2s ease-out;
+      pointer-events: auto;
+      border-left: 4px solid var(--accent);
+      font-size: 14px
+    }
+
+    .toast.call {
+      border-left-color: #007bfc
+    }
+
+    .toast.warn {
+      border-left-color: var(--warn)
+    }
+
+    .toast.err {
+      border-left-color: var(--danger)
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(30px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .toast svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      color: var(--accent)
+    }
+
+    .toast.call svg {
+      color: #007bfc
+    }
+
+    .toast.warn svg {
+      color: var(--warn)
+    }
+
+    .toast.err svg {
+      color: var(--danger)
+    }
+
+    .toast .grow {
+      flex: 1;
+      min-width: 0
+    }
+
+    .toast .grow .t {
+      font-weight: 600;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .toast .grow .s {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    /* AI pulse badge */
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(90deg, #7f66ff, #00a884);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 8px;
+      font-weight: 700;
+      letter-spacing: .3px
+    }
+
+    .ai-badge svg {
+      width: 10px;
+      height: 10px
+    }
+
+    /* Star panel */
+    .sentiment-bar {
+      display: flex;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px
+    }
+
+    .sentiment-bar .pos {
+      background: #4caf50
+    }
+
+    .sentiment-bar .neu {
+      background: #9e9e9e
+    }
+
+    .sentiment-bar .neg {
+      background: #f44336
+    }
+
+    .sentiment-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .sentiment-legend i {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      margin-right: 4px
+    }
+
+    @media(max-width:900px) {
+      .info-panel.open {
+        width: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 40;
+        box-shadow: -4px 0 30px rgba(0, 0, 0, .3)
+      }
+    }
+
+    @media(max-width:760px) {
+      body::before {
+        display: none
+      }
+
+      .app {
+        height: 100%;
+        max-width: none;
+        box-shadow: none
+      }
+
+      .sidebar {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        border-right: none
+      }
+
+      .chat {
+        display: none
+      }
+
+      .app.mobile-open .sidebar {
+        display: none
+      }
+
+      .app.mobile-open .chat {
+        display: flex
+      }
+
+      .back-btn {
+        display: grid
+      }
+
+      .bubble {
+        max-width: 82%
+      }
+
+      .messages {
+        padding: 14px 12px
+      }
+
+      .info-panel {
+        position: absolute
+      }
+
+      .toast-root {
+        top: auto;
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        max-width: none
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" id="app">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <header class="sidebar-header">
+        <div class="avatar" id="myAvatar" style="--c:#7f66ff;cursor:pointer">ME</div>
+        <div class="header-actions">
+          <button class="icon-btn" id="themeBtn" title="Toggle theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="newChatBtn" title="New chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path
+                d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z" />
+              <path d="M12 8.5v5M9.5 11h5" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="menuBtn" title="Menu">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="5" r="1.9" />
+              <circle cx="12" cy="12" r="1.9" />
+              <circle cx="12" cy="19" r="1.9" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="sidebar-tabs">
+        <div class="tab active" data-tab="chats">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z" />
+          </svg>
+          Chats
+        </div>
+        <div class="tab" data-tab="status">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 3a9 9 0 0 1 9 9" />
+          </svg>
+          Status
+        </div>
+        <div class="tab" data-tab="calls">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M21 16.9v2.6a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.7 17.3 17.3 0 0 1-5.3-5.3A17.6 17.6 0 0 1 3.3 5.5 1.8 1.8 0 0 1 5.1 3.5h2.6a1.8 1.8 0 0 1 1.8 1.6c.1 1 .3 1.9.6 2.8a1.8 1.8 0 0 1-.4 1.9L8.6 11a14 14 0 0 0 5.3 5.3l1.2-1.1a1.8 1.8 0 0 1 1.9-.4c.9.3 1.8.5 2.8.6a1.8 1.8 0 0 1 1.6 1.5z" />
+          </svg>
+          Calls
+        </div>
+      </div>
+
+      <div id="searchWrap" class="search-wrap">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20.5 20.5 16.6 16.6" />
+          </svg>
+          <input id="searchInput" type="text" placeholder="Search or start new chat" autocomplete="off" />
+        </div>
+      </div>
+
+      <div id="filterRow" class="filter-row">
+        <div class="chip active" data-filter="all">All</div>
+        <div class="chip" data-filter="unread">Unread</div>
+        <div class="chip" data-filter="pinned">Pinned</div>
+        <div class="chip" data-filter="archived">Archived</div>
+      </div>
+
+      <div class="chat-list" id="chatList"></div>
+    </aside>
+
+    <!-- ================= CHAT PANEL ================= -->
+    <main class="chat">
+      <div class="empty-state" id="emptyState">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00a884" stroke-width="1" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10.5" opacity=".25" />
+          <path d="M7.5 9.5h9M7.5 13h6" opacity=".6" />
+          <path d="M12 17.5v-2" opacity=".6" />
+        </svg>
+        <h1>tarunsfxo-WhatsApp</h1>
+        <p>End-to-end encrypted. Pick a chat to start messaging.<br />Right-click any message for reply, react, forward
+          and more.</p>
+      </div>
+
+      <div class="chat-window hidden" id="chatWindow">
+        <header class="chat-header">
+          <button class="icon-btn back-btn" id="backBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M19 12H5M11 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <div class="avatar" id="hAvatar">?</div>
+          <div class="who" id="headerWho">
+            <div class="name" id="hName">—</div>
+            <div class="status" id="hStatus">online</div>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn" id="voiceCallBtn" title="Voice call">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M21 16.9v2.6a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.7 17.3 17.3 0 0 1-5.3-5.3A17.6 17.6 0 0 1 3.3 5.5 1.8 1.8 0 0 1 5.1 3.5h2.6a1.8 1.8 0 0 1 1.8 1.6c.1 1 .3 1.9.6 2.8a1.8 1.8 0 0 1-.4 1.9L8.6 11a14 14 0 0 0 5.3 5.3l1.2-1.1a1.8 1.8 0 0 1 1.9-.4c.9.3 1.8.5 2.8.6a1.8 1.8 0 0 1 1.6 1.5z" />
+              </svg>
+            </button>
+            <button class="icon-btn" id="videoCallBtn" title="Video call">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M22 8.5 16 12l6 3.5v-7z" />
+                <rect x="2" y="6" width="14" height="12" rx="2.5" />
+              </svg>
+            </button>
+            <button class="icon-btn" id="chatSearchBtn" title="Search in chat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20.5 20.5 16.6 16.6" />
+              </svg>
+            </button>
+            <button class="icon-btn" id="infoBtn" title="Contact info">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="5" r="1.9" />
+                <circle cx="12" cy="12" r="1.9" />
+                <circle cx="12" cy="19" r="1.9" />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="chat-search-bar hidden" id="chatSearchBar"
+          style="background:var(--panel-2);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center">
+          <input id="chatSearchInput" type="text" placeholder="Search messages…"
+            style="flex:1;height:36px;border:none;outline:none;border-radius:8px;padding:0 12px;background:var(--input-bg);color:var(--text);font-family:inherit" />
+          <button class="icon-btn sm" id="chatSearchClose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="messages" id="messages"></div>
+
+        <div class="attach-preview hidden" id="attachPreview"></div>
+        <div class="reply-preview hidden" id="replyPreview"></div>
+        <div class="edit-preview hidden" id="editPreview"></div>
+
+        <div class="smart-replies hidden" id="smartReplies"></div>
+
+        <div class="emoji-bar" id="emojiBar">
+          <div class="emoji-tabs">
+            <div class="et active" data-et="emojis">Emojis</div>
+            <div class="et" data-et="stickers">Stickers</div>
+            <div class="et" data-et="gifs">GIFs</div>
+          </div>
+          <div class="emoji-grid emojis" id="emojiGrid"></div>
+        </div>
+
+        <footer class="composer">
+          <div class="popover" id="attachPopover">
+            <button data-attach="photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                <circle cx="8.5" cy="9.5" r="1.5" />
+                <path d="m3 17 5-5 4 4 3-3 6 6" />
+              </svg> Photos & videos</button>
+            <button data-attach="document"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                <path d="M14 3v6h6" />
+              </svg> Document</button>
+            <button data-attach="camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg> Camera</button>
+            <button data-attach="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg> Contact</button>
+            <button data-attach="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg> Location</button>
+            <button data-attach="poll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18" />
+                <path d="M7 14l4-4 3 3 6-7" />
+              </svg> Poll</button>
+          </div>
+
+          <button class="icon-btn" id="emojiBtn" title="Emoji">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="9.5" />
+              <path d="M8.5 14.5s1.3 1.8 3.5 1.8 3.5-1.8 3.5-1.8" />
+              <circle cx="9" cy="9.5" r="1" fill="currentColor" stroke="none" />
+              <circle cx="15" cy="9.5" r="1" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="attachBtn" title="Attach">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path
+                d="M21.4 11.6 12.2 20.8a5.5 5.5 0 0 1-7.8-7.8l9.2-9.2a3.7 3.7 0 0 1 5.2 5.2L9.9 18a1.8 1.8 0 0 1-2.6-2.6l8.3-8.3" />
+            </svg>
+          </button>
+          <input id="msgInput" type="text" placeholder="Type a message" autocomplete="off" />
+          <button class="icon-btn" id="micBtn" title="Voice message">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="9" y="3" width="6" height="12" rx="3" />
+              <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+            </svg>
+          </button>
+          <button class="icon-btn send-btn" id="sendBtn" title="Send">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </button>
+        </footer>
+      </div>
+    </main>
+
+    <!-- ================= INFO PANEL ================= -->
+    <aside class="info-panel" id="infoPanel">
+      <div class="panel-header">
+        <button class="icon-btn" id="infoClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+        <div class="title" id="infoTitle">Contact info</div>
+      </div>
+      <div class="panel-scroll" id="infoBody"></div>
+    </aside>
+  </div>
+
+  <!-- ================= MODAL ROOT ================= -->
+  <div class="modal-root" id="modalRoot"></div>
+
+  <!-- ================= CONTEXT MENU ================= -->
+  <div class="ctx-menu" id="ctxMenu"></div>
+
+  <!-- ================= CALL SCREEN ================= -->
+  <div class="call-screen" id="callScreen">
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="who-avatar" id="callAvatar">?</div>
+      <div class="who-name" id="callName">—</div>
+      <div class="who-status" id="callStatus">Calling…</div>
+    </div>
+    <div class="timer" id="callTimer"></div>
+    <div class="controls">
+      <button class="ctrl" id="ctrlMute" title="Mute">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="9" y="3" width="6" height="12" rx="3" />
+          <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+        </svg>
+      </button>
+      <button class="ctrl" id="ctrlVideo" title="Camera">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M22 8.5 16 12l6 3.5v-7z" />
+          <rect x="2" y="6" width="14" height="12" rx="2.5" />
+        </svg>
+      </button>
+      <button class="ctrl" id="ctrlSpeaker" title="Speaker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M11 5 6 9H2v6h4l5 4z" />
+          <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14" />
+        </svg>
+      </button>
+      <button class="ctrl end" id="ctrlEnd" title="End call">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 9c-1.6 0-3.2.3-4.7.8v3.6c0 .6-.5 1.1-1.1 1.1-.3 0-.5-.1-.7-.2l-4.8-2.4C.3 11.7 0 11.2 0 10.7c0-.2 0-.4.1-.6C1.2 6 6.1 3 12 3s10.8 3 11.9 7.1c.1.2.1.4.1.6 0 .5-.3 1-.7 1.2l-4.8 2.4c-.2.1-.4.2-.7.2-.6 0-1.1-.5-1.1-1.1V9.8C15.2 9.3 13.6 9 12 9z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= TOASTS ================= -->
+  <div class="toast-root" id="toastRoot"></div>
+
+  <!-- hidden file inputs -->
+  <input type="file" id="filePhoto" accept="image/*,video/*" multiple hidden />
+  <input type="file" id="fileDoc" hidden />
+  <input type="file" id="fileCam" accept="image/*" capture="environment" hidden />
+
+  <script>
+    /* =========================================================
+       DATA
+       ========================================================= */
+    const ME = { name: "You", about: "Available", phone: "+91 90000 00000", color: "#7f66ff" };
+
+    const CHATS = [
+      {
+        id: 1, name: "Priya Menon", color: "#e17076", about: "online", unread: 0, type: "dm",
+        phone: "+91 98765 43210", pinned: false, archived: false, muted: false, e2e: true, disappearing: false,
+        messages: [
+          { id: 1, text: "Hey! Are we still on for tomorrow?", time: "09:12", out: false },
+          { id: 2, text: "Yes of course 🙂 11am works?", time: "09:14", out: true, status: "read" },
+          { id: 3, text: "Perfect. I'll book the table.", time: "09:15", out: false, starred: true }
+        ]
+      },
+      {
+        id: 2, name: "Design Team", color: "#7bc862", about: "5 participants", unread: 3, type: "group",
+        members: ["You", "Ravi", "Nina", "Amit", "Sara"], pinned: true, archived: false, muted: false,
+        e2e: true, disappearing: false, description: "Weekly design sync & mockups",
+        messages: [
+          { id: 1, text: "The new mockups are up on Figma.", time: "08:02", out: false, from: "Ravi" },
+          { id: 2, text: "Looks clean 🔥", time: "08:05", out: false, from: "Nina" },
+          { id: 3, text: "I'll review them after standup.", time: "08:20", out: true, status: "read" },
+          { id: 4, text: "Awesome, thanks!", time: "08:21", out: false, from: "Ravi" }
+        ]
+      },
+
+      {
+        id: 3, name: "Arjun Verma", color: "#65aadd", about: "last seen today at 08:40", unread: 1, type: "dm",
+        phone: "+91 99887 76655", pinned: false, archived: false, muted: false, e2e: true, disappearing: false,
+        messages: [
+          { id: 1, text: "Bro did you see the match?", time: "23:41", out: false },
+          { id: 2, text: "Missed the second half 😩", time: "23:44", out: true, status: "read" },
+          { id: 3, text: "You missed history. 4-3 in extra time!", time: "23:45", out: false }
+        ]
+      },
+      {
+        id: 4, name: "Mom", color: "#f2a54c", about: "online", unread: 0, type: "dm",
+        phone: "+91 90000 11111", pinned: true, archived: false, muted: false, e2e: true, disappearing: true,
+        messages: [
+          { id: 1, text: "Did you eat lunch?", time: "13:05", out: false },
+          { id: 2, text: "Yes mom, just finished 🍛", time: "13:20", out: true, status: "read" },
+          { id: 3, text: "Good. Don't skip dinner.", time: "13:21", out: false }
+        ]
+      },
+      {
+        id: 5, name: "Jerry_fxo", color: "#a76bcf", about: "last seen yesterday at 21:12", unread: 0, type: "dm",
+        phone: "+91 91111 22222", pinned: false, archived: true, muted: false, e2e: true, disappearing: false,
+        messages: [
+          { id: 1, text: "Sending the report now.", time: "18:30", out: true, status: "delivered" },
+          { id: 2, text: "Got it, reviewing 👍", time: "18:52", out: false }
+        ]
+      },
+      {
+        id: 6, name: "Weekend Trip 🏔️", color: "#00a884", about: "8 participants", unread: 0, type: "group",
+        members: ["You", "Kabir", "Riya", "Dev", "Zoya", "Arnav", "Tara", "Vikram"], pinned: false, archived: false,
+        muted: true, e2e: true, disappearing: false, description: "Manali trip · Dec 22–25",
+        messages: [
+          { id: 1, text: "Booked the cab for 6am.", time: "20:11", out: false, from: "Kabir" },
+          { id: 2, text: "Nice, I'll bring snacks.", time: "20:15", out: true, status: "read" }
+        ]
+      }
+
+    ];
+
+    const STATUSES = [
+      { id: 1, name: "Priya Menon", color: "#e17076", time: "25m ago", type: "text", text: "Coffee and deadlines ☕💻", seen: false, reactions: [] },
+      { id: 2, name: "Arjun Verma", color: "#65aadd", time: "1h ago", type: "text", text: "Match day! 🔥⚽", seen: false, reactions: [] },
+      { id: 3, name: "Mom", color: "#f2a54c", time: "3h ago", type: "text", text: "Made your favourite today 🍲", seen: true, reactions: ["❤️"] },
+      { id: 4, name: "Nina", color: "#7bc862", time: "5h ago", type: "text", text: "New mockups dropping soon ✨", seen: true, reactions: [] }
+    ];
+
+    const CALLS = [
+      { id: 1, name: "Priya Menon", color: "#e17076", type: "in", video: false, time: "Today 09:20", dur: "12:14" },
+      { id: 2, name: "Design Team", color: "#7bc862", type: "in", video: true, time: "Yesterday 16:02", dur: "45:31", group: true },
+      { id: 3, name: "Arjun Verma", color: "#65aadd", type: "out", video: false, time: "Yesterday 09:15", dur: "3:02" },
+      { id: 4, name: "Mom", color: "#f2a54c", type: "missed", video: true, time: "Mon 20:40", dur: "" },
+      { id: 5, name: "Sneha Iyer", color: "#a76bcf", type: "out", video: true, time: "Sun 11:10", dur: "22:47" }
+    ];
+
+    const EMOJIS_LIST = ["😀", "😂", "🥰", "😎", "🤔", "👍", "🙏", "🔥", "🎉", "❤️", "😅", "😭", "😍", "🤝", "✅", "☕", "🍕", "🚀", "✨", "👏", "💯", "🤯", "😴", "🥳", "👋", "🙌", "💪", "🌟", "🎂", "🍔"];
+    const STICKERS = ["🐱", "🐶", "🦊", "🐻", "🐼", "🦁", "🐯", "🦄", "🐸", "🐵", "🍩", "🍕", "🌈", "⚡", "💎", "🎈"];
+    const GIFS = ["Wow", "LOL", "Yay!", "OMG", "Nope", "Please", "Thanks", "Party", "Nailed it", "Facepalm", "Thumbs up", "Let's go"];
+
+    /* =========================================================
+       STATE
+       ========================================================= */
+    const state = {
+      chats: CHATS,
+      statuses: STATUSES,
+      calls: CALLS,
+      activeId: null,
+      tab: "chats",
+      filter: "all",
+      query: "",
+      chatQuery: "",
+      typingIn: null,
+      replyTo: null,
+      editing: null,
+      attachment: null,
+      selectedMsgId: null,
+      ctxMsg: null,
+      call: null,
+      recordingVoice: false
+    };
+    let replyTimers = [];
+
+    /* =========================================================
+       HELPERS
+       ========================================================= */
+    const $ = (s) => document.getElementById(s);
+    const $$ = (s) => document.querySelectorAll(s);
+    const appEl = $("app");
+    const chatListEl = $("chatList");
+    const messagesEl = $("messages");
+    const inputEl = $("msgInput");
+    const sendBtn = $("sendBtn");
+    const emojiBar = $("emojiBar");
+    const ctxMenu = $("ctxMenu");
+    const modalRoot = $("modalRoot");
+    const toastRoot = $("toastRoot");
+    const infoPanel = $("infoPanel");
+
+    const esc = (s) => String(s).replace(/[&<>"']/g, c =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const initials = (n) => n.trim().split(/\s+/).slice(0, 2).map(w => (w[0] || "").toUpperCase()).join("");
+    const nowTime = () => {
+      const d = new Date();
+      return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+    };
+    const uid = () => Date.now() + Math.floor(Math.random() * 9999);
+    const getActive = () => state.chats.find(c => c.id === state.activeId) || null;
+    const lastMsg = (c) => c.messages.length ? c.messages[c.messages.length - 1] : null;
+    const findMsg = (chat, id) => chat.messages.find(m => m.id === id);
+
+    const TICK_SINGLE = `<svg class="tick" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 6 4.8 9.3 10.5 2"/></svg>`;
+    const TICK_DOUBLE = `<svg class="tick" viewBox="0 0 18 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6 4.3 9.3 10 2"/><path d="M6.6 6 9.9 9.3 15.6 2"/></svg>`;
+    const tickHTML = (s) => s === "read" ? TICK_DOUBLE.replace('class="tick"', 'class="tick read"')
+      : s === "delivered" ? TICK_DOUBLE : TICK_SINGLE;
+
+    /* =========================================================
+       AI — CONTEXTUAL REPLY ENGINE
+       ========================================================= */
+    const lastPick = {};
+    function pick(arr, key) {
+      if (arr.length === 1) return arr[0];
+      let c, g = 0; do { c = arr[Math.floor(Math.random() * arr.length)]; g++; } while (c === lastPick[key] && g < 15);
+      lastPick[key] = c; return c;
+    }
+
+    const REPLY_RULES = [
+      { id: "greeting", test: /(^|\b)(hi+|hey+|hello+|helo+|yo|hola|namaste|good\s*(morning|afternoon|evening)|gm\b|gn\b)/i, replies: ["Hey! 👋 How's it going?", "Hello! Long time no chat 😄", "Hi! What's up?", "Hey you 🙂 How have you been?"] },
+      { id: "howareyou", test: /(how\s*(are|r)\s*(you|u)|how'?s\s*it\s*going|how\s*you\s*doing|what'?s\s*up|hru\b|kya\s*haal)/i, replies: ["Doing great, thanks! You?", "All good here 😄 What about you?", "Pretty good — busy week. You?", "Can't complain 😌 How about you?"] },
+      { id: "thanks", test: /\b(thanks|thank\s*you|thanku|thnx|thx|tysm|ty|dhanyavad|shukriya)\b/i, replies: ["Anytime! 😊", "No problem at all 🙂", "Happy to help!", "Sure thing 👍"] },
+      { id: "apology", test: /\b(sorry|my\s*bad|apolog(y|ies)|maaf\s*karo|maaf)\b/i, replies: ["Totally fine, don't worry 🙂", "No problem at all!", "Hey, it happens. All good 👍"] },
+      { id: "bye", test: /\b(bye+|goodbye|good\s*night|gn\b|see\s*ya|see\s*you|talk\s*later|ttyl|good\s*night)\b/i, replies: ["Bye! Talk soon 👋", "See you later! 🙂", "Take care, good night 🌙", "Catch you later!"] },
+      { id: "love", test: /\b(love\s*(you|u|ya)|miss\s*(you|u)|ily\b)\b/i, replies: ["Aww, love you too ❤️", "Miss you more! 🥺", "Same here ❤️"] },
+      { id: "laugh", test: /(lol|lmao|rofl|haha+|hehe+|😂|🤣|😹)/i, replies: ["😂😂 Glad you liked it", "Haha I know right!", "😆😆", "That cracked me up too"] },
+      { id: "food", test: /\b(food|lunch|dinner|breakfast|hungry|eat|pizza|burger|coffee|chai|tea|restaurant|khana|snack)\b/i, replies: ["I'm starving too 😩 What are you having?", "Let's grab something — I'm in 🍕", "Could really go for a coffee ☕", "Count me in if you're ordering!"] },
+      { id: "plan", test: /\b(meet|meeting|plan|tomorrow|tonight|schedule|available|free\s*today|catch\s*up|are\s*we\s*on|call\s*at)\b/i, replies: ["Works for me 👍 What time?", "I'm free after 6, does that work?", "Let's lock it in. Send me the details?", "Sounds good — I'll be there."] },
+      { id: "money", test: /\b(money|paid|payment|bill|invoice|cost|price|expensive|cheap|rupees|dollars|budget)\b/i, replies: ["I'll transfer it today, promise 🙂", "Let me check the numbers and get back to you.", "Split it evenly? That's easiest.", "Ouch, that's a bit pricey 😅"] },
+      { id: "help", test: /\b(help|can\s*you|could\s*you|would\s*you|please|pls|plz|need\s*you|assist)\b/i, replies: ["Sure, I can help with that 👍", "On it! Give me a few minutes.", "Yep, send it over and I'll look.", "Happy to — what exactly do you need?"] },
+      { id: "congrats", test: /\b(congrats|congratulations|well\s*done|good\s*job|proud\s*of\s*you|selected|got\s*the\s*job|passed)\b/i, replies: ["Congratulations! 🎉 That's amazing!", "So happy for you! 🥳", "Well done, you earned it 👏"] },
+      { id: "compliment", test: /\b(awesome|amazing|great|nice|brilliant|perfect|superb|fantastic|love\s*it|looks\s*good)\b/i, replies: ["Thanks! 😊 Appreciate it.", "Glad you liked it! 🙌", "That means a lot ❤️"] },
+      { id: "positive", test: /\b(happy|excited|yay|woohoo|glad|good\s*news|great\s*news|finally)\b/i, replies: ["That's great to hear! 😄", "Yesss! 🎉 Tell me everything.", "So happy for you!", "Finally! About time 😁"] },
+      { id: "negative", test: /\b(sad|tired|stressed|upset|angry|terrible|awful|sick|ill|depressed|annoyed|frustrated|exhausted)\b/i, replies: ["Oh no, what happened? 🥺", "That sucks. Want to talk about it?", "Take it easy, okay? Rest up.", "I'm here if you need anything ❤️"] },
+      { id: "work", test: /\b(work|office|job|project|deadline|boss|client|study|exam|college|school|class|assignment|interview)\b/i, replies: ["Sounds hectic 😅 How's it going?", "Deadlines everywhere, I feel you.", "Good luck! You've got this 💪", "Let me know if you need a hand."] },
+      { id: "agree", test: /^(yes|yeah|yep|ya|yup|ok|okay|okey|k|sure|fine|alright|correct|right|haan|ha|done|noted)\b/i, replies: ["Cool 👍", "Perfect!", "Great, let's do it.", "Awesome, see you then 🙂"] },
+      { id: "disagree", test: /^(no|nope|nah|never|not\s*really|nahi|nahin)\b/i, replies: ["Oh okay, no problem.", "Alright, maybe next time 🙂", "Fair enough.", "Hmm, why not?"] },
+      { id: "q-time", test: /\b(when|what\s*time|which\s*day|how\s*long|kab)\b/i, replies: ["Let me check and confirm the time ⏰", "I think around 6pm — I'll confirm.", "Give me 5 min, I'll check my calendar.", "Does tomorrow evening work?"] },
+      { id: "q-where", test: /\b(where|which\s*place|kahan)\b/i, replies: ["Near the main square — I'll drop a pin 📍", "Same place as last time?", "I'll send the location in a sec.", "Not sure yet, let me find out."] },
+      { id: "q-who", test: /\b(who|whose|kisne|kaun)\b/i, replies: ["Not sure yet, let me ask around.", "I think it was Ravi. Let me confirm.", "No idea honestly 😅"] },
+      { id: "q-why", test: /\b(why|how\s*come|kyun)\b/i, replies: ["Honestly? No idea 😅", "Let's figure it out together.", "I was wondering the same thing.", "Long story — I'll tell you later 😄"] },
+      { id: "q-how", test: /\b(how\s*(do|can|to|should)|how\s*do\s*i)\b/i, replies: ["Pretty simple — I'll walk you through it.", "Just follow the same steps as last time 👍", "Let me send you a quick guide."] }
+    ];
+    const FALLBACK_SHORT = ["Got it 👍", "Makes sense.", "Oh nice!", "Hmm, tell me more.", "Okay, noted 👌", "Interesting!", "I see what you mean."];
+    const FALLBACK_LONG = ["That's a lot to take in 😅 Give me a sec.", "Okay, I read all of it. Let me think.", "Got it — that makes sense now.", "Hmm, I need to process that 😄"];
+
+    function generateReply(raw) {
+      const text = String(raw).trim();
+      const lower = text.toLowerCase();
+      for (const r of REPLY_RULES) if (r.test.test(lower)) return pick(r.replies, r.id);
+      if (/\?\s*$/.test(text)) return pick([
+        "Good question 🤔 Let me think about it.", "Hmm, I'm not 100% sure — I'll check.",
+        "Let me get back to you on that one.", "Honestly, no idea 😅 What do you think?"], "gq");
+      if (text.length > 70) return pick(FALLBACK_LONG, "long");
+      if (text.length <= 4) return pick(["Got it 👍", "Okay!", "Hmm 🙂", "Cool cool."], "tiny");
+      if (Math.random() < 0.2) {
+        const q = text.length > 30 ? text.slice(0, 28).trim() + "…" : text;
+        return `"${q}" — yeah, I get what you mean.`;
+      }
+      return pick(FALLBACK_SHORT, "short");
+    }
+
+    /* Smart reply suggestions */
+    function smartReplies(text) {
+      const t = text.toLowerCase();
+      if (/\?/.test(t)) return ["Yes, sure 👍", "Let me check", "Not sure yet"];
+      if (/(meet|tomorrow|tonight|plan|call)/.test(t)) return ["Works for me", "What time?", "Can't make it"];
+      if (/(thanks|thank you)/.test(t)) return ["Anytime 😊", "No worries", "👍"];
+      if (/(congrats|great news|selected)/.test(t)) return ["Congrats! 🎉", "So happy for you", "Amazing!"];
+      if (/(food|lunch|dinner|coffee)/.test(t)) return ["I'm in 🍕", "Can't today", "Sounds good"];
+      if (/(sad|tired|stressed|upset)/.test(t)) return ["Take care ❤️", "What happened?", "Here for you"];
+      if (/(hi|hey|hello)/.test(t)) return ["Hey! 👋", "Hi there", "Hello 😄"];
+      return ["Got it 👍", "Okay", "Tell me more"];
+    }
+
+    /* Sentiment analysis */
+    function analyzeSentiment(messages) {
+      const pos = /(good|great|awesome|happy|love|nice|thanks|amazing|perfect|yay|❤️|😍|🎉|👍)/i;
+      const neg = /(bad|sad|angry|hate|awful|terrible|sorry|upset|stress|😩|😭|😡|👎)/i;
+      let p = 0, n = 0;
+      messages.forEach(m => { if (pos.test(m.text)) p++; if (neg.test(m.text)) n++; });
+      const total = messages.length || 1;
+      const pp = Math.round(p / total * 100), nn = Math.round(n / total * 100);
+      const neu = Math.max(0, 100 - pp - nn);
+      let label = "Neutral"; if (pp > nn + 15) label = "Positive"; else if (nn > pp + 15) label = "Negative";
+      return { pp, nn, neu, label, total };
+    }
+
+    /* Spam detection */
+    function isSpam(text) {
+      const caps = (text.match(/[A-Z]/g) || []).length;
+      const letters = (text.match(/[A-Za-z]/g) || []).length;
+      if (letters > 12 && caps / letters > 0.75) return true;
+      if (/(https?:\/\/|www\.)/i.test(text) && /(win|prize|free|click|claim|urgent)/i.test(text)) return true;
+      if (/(.)\1{6,}/.test(text)) return true;
+      return false;
+    }
+
+    /* Tiny translation dictionary (EN→ES demo) */
+    const TRANS = {
+      hello: "hola", hi: "hola", hey: "oye", thanks: "gracias", "thank you": "gracias",
+      yes: "sí", no: "no", good: "bueno", bad: "malo", "good morning": "buenos días",
+      "good night": "buenas noches", please: "por favor", sorry: "lo siento", love: "amor",
+      friend: "amigo", water: "agua", food: "comida", happy: "feliz", sad: "triste",
+      "how are you": "cómo estás", "see you": "hasta luego", bye: "adiós", welcome: "bienvenido",
+      "i love you": "te quiero", "what's up": "qué tal", great: "genial", cool: "genial",
+      today: "hoy", tomorrow: "mañana", "thank you so much": "muchas gracias"
+    };
+    function fakeTranslate(text, to = "Spanish") {
+      let out = text;
+      Object.keys(TRANS).sort((a, b) => b.length - a.length).forEach(k => {
+        out = out.replace(new RegExp("\\b" + k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "gi"),
+          m => TRANS[k]);
+      });
+      return { text: out, lang: to };
+    }
+
+    /* Extractive summarizer */
+    function summarize(messages) {
+      if (!messages.length) return "Nothing to summarize.";
+      const stop = new Set("the a an and or but if is are was were be been being to of in on at for with from by as it its this that these those i you he she we they me him her us them my your his her our their".split(" "));
+      const freq = {};
+      messages.forEach(m => {
+        (m.text.toLowerCase().match(/\b[a-z]{3,}\b/g) || []).forEach(w => { if (!stop.has(w)) freq[w] = (freq[w] || 0) + 1; });
+      });
+      const scored = messages.map(m => {
+        const words = m.text.toLowerCase().match(/\b[a-z]{3,}\b/g) || [];
+        let s = 0; words.forEach(w => { if (!stop.has(w)) s += freq[w] || 0; });
+        return { m, s: s / Math.max(1, words.length) };
+      }).sort((a, b) => b.s - a.s);
+      const top = scored.slice(0, Math.min(3, scored.length)).sort((a, b) => a.m.id - b.m.id);
+      return top.map(t => `• ${t.m.text}`).join("\n");
+    }
+
+    /* =========================================================
+       TOASTS
+       ========================================================= */
+    const TOAST_ICONS = {
+      msg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/></svg>`,
+      call: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16.9v2.6a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.7 17.3 17.3 0 0 1-5.3-5.3A17.6 17.6 0 0 1 3.3 5.5 1.8 1.8 0 0 1 5.1 3.5h2.6a1.8 1.8 0 0 1 1.8 1.6c.1 1 .3 1.9.6 2.8a1.8 1.8 0 0 1-.4 1.9L8.6 11a14 14 0 0 0 5.3 5.3l1.2-1.1a1.8 1.8 0 0 1 1.9-.4c.9.3 1.8.5 2.8.6a1.8 1.8 0 0 1 1.6 1.5z"/></svg>`,
+      warn: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3 1.5 21h21z"/><path d="M12 9v5M12 17.5v.5"/></svg>`,
+      err: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>`
+    };
+    function toast(type, title, sub, ms = 3600) {
+      const el = document.createElement("div");
+      el.className = "toast " + type;
+      el.innerHTML = `${TOAST_ICONS[type] || TOAST_ICONS.msg}
+    <div class="grow"><div class="t">${esc(title)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ""}</div>`;
+      el.onclick = () => el.remove();
+      toastRoot.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = "0"; el.style.transform = "translateX(30px)";
+        el.style.transition = "all .25s"; setTimeout(() => el.remove(), 250);
+      }, ms);
+    }
+
+    /* =========================================================
+       RENDER: CHAT LIST
+       ========================================================= */
+    function renderChatList() {
+      const q = state.query.trim().toLowerCase();
+      const f = state.filter;
+      const list = state.chats.filter(c => {
+        if (f === "archived" && !c.archived) return false;
+        if (f !== "archived" && c.archived) return false;
+        if (f === "unread" && !c.unread) return false;
+        if (f === "pinned" && !c.pinned) return false;
+        if (!q) return true;
+        const last = lastMsg(c);
+        return c.name.toLowerCase().includes(q) || (last && last.text.toLowerCase().includes(q));
+      }).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+      if (!list.length) {
+        chatListEl.innerHTML = `<div class="list-empty">No chats here</div>`;
+        return;
+      }
+
+      chatListEl.innerHTML = list.map(c => {
+        const last = lastMsg(c);
+        let previewHTML;
+        if (c.typing) previewHTML = `<span class="preview typing">typing…</span>`;
+        else if (last) {
+          let prefix = "";
+          if (last.out) prefix = `<span class="you">You: </span>`;
+          else if (c.type === "group" && last.from) prefix = `<span class="you">${esc(last.from)}: </span>`;
+          const txt = last.text || (last.type === "image" ? "📷 Photo" : last.type === "video" ? "🎥 Video" : last.type === "doc" ? "📄 Document" : last.type === "voice" ? "🎤 Voice message" : last.type === "location" ? "📍 Location" : last.type === "contact" ? "👤 Contact" : last.type === "poll" ? "📊 Poll" : "");
+          previewHTML = `<span class="preview">${prefix}${esc(txt)}</span>`;
+        } else previewHTML = `<span class="preview" style="font-style:italic">No messages yet</span>`;
+
+        return `
+      <div class="chat-item ${c.id === state.activeId ? "active" : ""}" data-id="${c.id}">
+        <div class="avatar" style="--c:${c.color}">${esc(initials(c.name))}</div>
+        <div class="chat-item-body">
+          <div class="row">
+            <span class="chat-name">
+              ${c.pinned ? `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M14 4v5l3 3v2h-5v6l-1 2-1-2v-6H5v-2l3-3V4z"/></svg>` : ""}
+              ${c.muted ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>` : ""}
+              ${esc(c.name)}
+            </span>
+            <span class="chat-time">${last ? last.time : ""}</span>
+          </div>
+          <div class="row">
+            ${previewHTML}
+            ${c.unread ? `<span class="badge ${c.muted ? "muted" : ""}">${c.unread}</span>` : ""}
+          </div>
+        </div>
+      </div>`;
+      }).join("");
+    }
+
+    /* =========================================================
+       RENDER: STATUS LIST
+       ========================================================= */
+    function renderStatusList() {
+      chatListEl.innerHTML = `
+    <div class="status-item" id="myStatusBtn" style="border-bottom:1px solid var(--border)">
+      <div class="ring" style="background:var(--accent)">
+        <div class="avatar" style="--c:${ME.color}">${esc(initials(ME.name))}</div>
+      </div>
+      <div class="item-body">
+        <div class="item-title">My status</div>
+        <div class="item-sub">Tap to add status update</div>
+      </div>
+    </div>
+    <div style="padding:14px 16px 6px;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.6px">Recent</div>
+    ${state.statuses.map(s => `
+      <div class="status-item" data-status="${s.id}">
+        <div class="ring ${s.seen ? "viewed" : ""}">
+          <div class="avatar" style="--c:${s.color}">${esc(initials(s.name))}</div>
+        </div>
+        <div class="item-body">
+          <div class="item-title">${esc(s.name)}</div>
+          <div class="item-sub">${esc(s.time)}</div>
+        </div>
+      </div>
+    `).join("")}`;
+      $("myStatusBtn").onclick = openStatusComposer;
+      chatListEl.querySelectorAll("[data-status]").forEach(el => {
+        el.onclick = () => viewStatus(Number(el.dataset.status));
+      });
+    }
+
+    /* =========================================================
+       RENDER: CALLS LIST
+       ========================================================= */
+    function renderCallsList() {
+      if (!state.calls.length) {
+        chatListEl.innerHTML = `<div class="list-empty">No calls yet</div>`; return;
+      }
+      chatListEl.innerHTML = state.calls.map(c => {
+        const icon = c.video
+          ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8.5 16 12l6 3.5v-7z"/><rect x="2" y="6" width="14" height="12" rx="2.5"/></svg>`
+          : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16.9v2.6a1.8 1.8 0 0 1-2 1.8 17.6 17.6 0 0 1-7.7-2.7 17.3 17.3 0 0 1-5.3-5.3A17.6 17.6 0 0 1 3.3 5.5 1.8 1.8 0 0 1 5.1 3.5h2.6a1.8 1.8 0 0 1 1.8 1.6c.1 1 .3 1.9.6 2.8a1.8 1.8 0 0 1-.4 1.9L8.6 11a14 14 0 0 0 5.3 5.3l1.2-1.1a1.8 1.8 0 0 1 1.9-.4c.9.3 1.8.5 2.8.6a1.8 1.8 0 0 1 1.6 1.5z"/></svg>`;
+        return `<div class="call-item" data-call="${c.id}">
+      <div class="avatar" style="--c:${c.color}">${esc(initials(c.name))}</div>
+      <div class="item-body">
+        <div class="item-title">${esc(c.name)}${c.group ? ' <span style="font-size:11px;color:var(--muted)">(group)</span>' : ''}</div>
+        <div class="call-type ${c.type === "missed" ? "missed" : ""}">
+          ${icon}
+          <span class="item-sub">${c.type === "missed" ? "Missed" : c.type === "in" ? "Incoming" : "Outgoing"} · ${esc(c.time)}${c.dur ? " · " + c.dur : ""}</span>
+        </div>
+      </div>
+      <button class="icon-btn sm" data-recall="${c.id}">${icon}</button>
+    </div>`;
+      }).join("");
+      chatListEl.querySelectorAll("[data-recall]").forEach(el => {
+        el.onclick = (e) => { e.stopPropagation(); startCall(Number(el.dataset.recall), state.calls.find(x => x.id === Number(el.dataset.recall)).video); };
+      });
+    }
+
+    /* =========================================================
+       RENDER: MESSAGES
+       ========================================================= */
+    function mediaHTML(m) {
+      if (m.type === "image") return `<img src="${m.media}" alt="photo" data-open-media="${m.id}"/>`;
+      if (m.type === "video") return `<video src="${m.media}" controls></video>`;
+      if (m.type === "doc") return `<div class="doc"><div class="doc-icon">PDF</div>
+    <div class="doc-info"><div class="n">${esc(m.media.name)}</div><div class="s">${esc(m.media.size)}</div></div>
+    <button class="icon-btn sm" data-dl="${m.id}" title="Download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+    </button></div>`;
+      if (m.type === "location") return `<div class="loc">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/></svg>
+    <div class="loc-txt">📍 ${esc(m.media.label || "Shared location")}</div></div>`;
+      if (m.type === "contact") return `<div class="contact">
+    <div class="avatar" style="--c:#00a884">${esc(initials(m.media.name))}</div>
+    <div class="info"><div class="n">${esc(m.media.name)}</div><div class="p">${esc(m.media.phone)}</div></div></div>`;
+      if (m.type === "poll") {
+        const totalVotes = m.media.options.reduce((a, o) => a + (o.votes || 0), 0) || 1;
+        return `<div class="poll"><div class="q">${esc(m.media.question)}</div>
+      ${m.media.options.map((o, i) => `
+        <div class="opt ${m.media.myVote === i ? "voted" : ""}" data-poll="${m.id}" data-opt="${i}">
+          <div class="bar"><div class="fill" style="width:${Math.round((o.votes || 0) / totalVotes * 100)}%"></div>
+            <div class="lbl">${m.media.myVote === i ? "● " : ""}${esc(o.text)}</div></div>
+          <div class="pct">${Math.round((o.votes || 0) / totalVotes * 100)}%</div>
+        </div>`).join("")}
+      <div class="meta">${totalVotes} vote${totalVotes === 1 ? "" : "s"}</div></div>`;
+      }
+      if (m.type === "voice") {
+        const bars = Array.from({ length: 24 }, (_, i) => `<i style="height:${6 + Math.abs(Math.sin(i * 1.7)) * 16}px"></i>`).join("");
+        return `<div class="voice" data-voice="${m.id}">
+      <div class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="wave">${bars}</div>
+      <div class="dur">${m.media.duration}</div></div>`;
+      }
+      return "";
+    }
+
+    function bubbleHTML(m, groupStart, chat, chatQuery) {
+      const sender = (!m.out && chat.type === "group" && m.from) ? `<div style="font-size:12.5px;color:var(--accent-dark);font-weight:600;margin-bottom:3px">${esc(m.from)}</div>` : "";
+      let inner = "";
+      if (m.type && m.type !== "text") {
+        inner = mediaHTML(m);
+        if (m.text) inner += `<div class="caption">${esc(m.text)}</div>`;
+      } else {
+        let txt = esc(m.text);
+        if (chatQuery) txt = txt.replace(new RegExp(chatQuery.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), m2 => `<mark style="background:#ffe082;color:#000">${m2}</mark>`);
+        if (chat.type === "group") txt = txt.replace(/@(\w+)/g, `<b style="color:var(--accent-dark)">@$1</b>`);
+        inner = txt;
+      }
+
+      const reply = m.replyTo ? (() => {
+        const rm = findMsg(chat, m.replyTo);
+        if (!rm) return "";
+        const who = rm.out ? "You" : (rm.from || chat.name);
+        return `<div class="reply-quote" data-jump="${rm.id}"><div class="who">${esc(who)}</div><div class="txt">${esc(rm.text || "[media]")}</div></div>`;
+      })() : "";
+
+      const star = m.starred ? `<div class="star-flag">★</div>` : "";
+      const pin = m.pinned ? `<span class="pin-ico" title="Pinned"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 4v5l3 3v2h-5v6l-1 2-1-2v-6H5v-2l3-3V4z"/></svg></span>` : "";
+
+      const reactions = (m.reactions && Object.keys(m.reactions).length)
+        ? `<div class="reactions">${Object.entries(m.reactions).map(([em, users]) =>
+          `<div class="r ${users.includes("You") ? "mine" : ""}" data-react="${m.id}" data-em="${em}">${em}<span class="cnt">${users.length}</span></div>`).join("")}</div>`
+        : "";
+
+      const spam = isSpam(m.text || "") ? `<div style="color:var(--warn);font-size:11.5px;margin-top:4px">⚠️ Possibly spam</div>` : "";
+
+      const meta = `<span class="msg-meta">${m.edited ? '<span class="edited">edited</span> ' : ""}${pin}${m.time}${m.out ? tickHTML(m.status || "sent") : ""}</span>`;
+
+      const bubbleClass = (m.type && m.type !== "text" && m.type !== "poll") ? "bubble media" : "bubble";
+      return `
+    <div class="msg ${m.out ? "out" : "in"} ${groupStart ? "group-start" : ""} ${m._selected ? "selected" : ""}" data-mid="${m.id}">
+      <div class="${bubbleClass}">
+        ${sender}
+        ${reply}
+        ${star}
+        ${inner}
+        ${spam}
+        ${meta}
+      </div>
+    </div>
+    ${reactions}`;
+    }
+
+    function renderMessages(scroll = true) {
+      const chat = getActive(); if (!chat) return;
+      let html = `<div class="date-chip">Today</div>`;
+      chat.messages.forEach((m, i) => {
+        const prev = chat.messages[i - 1];
+        const groupStart = !prev || prev.out !== m.out || (prev.from || "") !== (m.from || "");
+        html += bubbleHTML(m, groupStart, chat, state.chatQuery);
+      });
+      if (state.typingIn === chat.id) {
+        html += `<div class="msg in group-start"><div class="bubble typing-bubble"><i></i><i></i><i></i></div></div>`;
+      }
+      messagesEl.innerHTML = html;
+      if (scroll) requestAnimationFrame(() => messagesEl.scrollTop = messagesEl.scrollHeight);
+    }
+
+    /* =========================================================
+       RENDER: HEADER
+       ========================================================= */
+    function renderHeader() {
+      const chat = getActive(); if (!chat) return;
+      $("hAvatar").style.setProperty("--c", chat.color);
+      $("hAvatar").textContent = initials(chat.name);
+      $("hName").innerHTML = `${esc(chat.name)}${chat.e2e ? ` <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>` : ""}`;
+      const st = $("hStatus");
+      if (state.typingIn === chat.id) { st.textContent = "typing…"; st.classList.add("typing"); }
+      else if (chat.type === "group") {
+        const names = (chat.members || []).slice(0, 5).join(", ");
+        st.textContent = `${chat.members.length} members · ${names}`;
+        st.classList.remove("typing");
+      } else {
+        st.textContent = chat.about;
+        st.classList.remove("typing");
+      }
+    }
+
+    function renderChat() {
+      const chat = getActive();
+      $("emptyState").classList.toggle("hidden", !!chat);
+      $("chatWindow").classList.toggle("hidden", !chat);
+      if (chat) { renderHeader(); renderMessages(); }
+    }
+
+    function render() {
+      if (state.tab === "chats") { renderChatList(); renderChat(); }
+      else if (state.tab === "status") { renderStatusList(); renderChat(); }
+      else { renderCallsList(); renderChat(); }
+    }
+
+    /* =========================================================
+       INFO PANEL
+       ========================================================= */
+    function openInfo() {
+      const chat = getActive(); if (!chat) return;
+      infoPanel.classList.add("open");
+      $("infoTitle").textContent = chat.type === "group" ? "Group info" : "Contact info";
+      const sent = analyzeSentiment(chat.messages);
+      const isGroup = chat.type === "group";
+
+      $("infoBody").innerHTML = `
+    <div class="panel-hero">
+      <div class="avatar lg" style="--c:${chat.color}">${esc(initials(chat.name))}</div>
+      <div class="name">${esc(chat.name)}</div>
+      <div class="sub">${isGroup ? (chat.members || []).length + " members" : esc(chat.phone || "")}</div>
+    </div>
+
+    ${isGroup ? `
+      <div class="panel-section"><div class="lbl">Description</div>
+        <div class="val">${esc(chat.description || "—")}</div></div>
+      <div class="panel-action" id="groupMembersBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="grow">${(chat.members || []).length} members</span>
+        <span style="color:var(--muted);font-size:13px">View</span></div>
+      <div class="panel-action" id="inviteLinkBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12 19"/></svg>
+        <span class="grow">Invite via link</span></div>
+    `: `
+      <div class="panel-section"><div class="lbl">About</div>
+        <div class="val">${esc(chat.about)}</div></div>
+      <div class="panel-section"><div class="lbl">Phone</div>
+        <div class="val">${esc(chat.phone || "—")}</div></div>
+    `}
+
+    <div class="panel-section">
+      <div class="lbl">Chat sentiment <span class="ai-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3 14 9l6 1-4.5 4.5L17 21l-5-3-5 3 1.5-6.5L4 10l6-1z"/></svg>AI</span></div>
+      <div class="val">${sent.label}</div>
+      <div class="sentiment-bar">
+        <div class="pos" style="width:${sent.pp}%"></div>
+        <div class="neu" style="width:${sent.neu}%"></div>
+        <div class="neg" style="width:${sent.nn}%"></div>
+      </div>
+      <div class="sentiment-legend">
+        <span><i style="background:#4caf50"></i>Positive ${sent.pp}%</span>
+        <span><i style="background:#9e9e9e"></i>Neutral ${sent.neu}%</span>
+        <span><i style="background:#f44336"></i>Negative ${sent.nn}%</span>
+      </div>
+    </div>
+
+    <div class="panel-action" id="disappearingToggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <span class="grow">Disappearing messages</span>
+      <div class="badge-toggle ${chat.disappearing ? "on" : ""}"></div></div>
+
+    <div class="panel-action" id="muteToggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      <span class="grow">Mute notifications</span>
+      <div class="badge-toggle ${chat.muted ? "on" : ""}"></div></div>
+
+    <div class="panel-action" id="encryptInfo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <span class="grow">Encryption</span>
+      <span style="color:var(--accent);font-size:13px">E2E ✓</span></div>
+
+    <div class="panel-action" id="blockBtn" style="color:var(--danger)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></svg>
+      <span class="grow">${isGroup ? "Exit group" : "Block contact"}</span></div>
+
+    <div class="panel-action" id="clearChatBtn" style="color:var(--danger)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      <span class="grow">Clear chat</span></div>
+  `;
+
+      $("disappearingToggle").onclick = () => {
+        chat.disappearing = !chat.disappearing;
+        toast("warn", "Disappearing messages", chat.disappearing ? "Enabled (24h)" : "Disabled");
+        openInfo();
+      };
+      $("muteToggle").onclick = () => {
+        chat.muted = !chat.muted;
+        toast("msg", chat.muted ? "Chat muted" : "Chat unmuted", chat.name);
+        renderChatList(); openInfo();
+      };
+      $("encryptInfo").onclick = () => toast("msg", "End-to-end encrypted", "Messages are secured with E2E encryption.");
+      $("blockBtn").onclick = () => {
+        if (confirm((isGroup ? "Exit " : "Block ") + chat.name + "?")) {
+          if (isGroup) chat.members = (chat.members || []).filter(m => m !== "You");
+          else toast("err", "Contact blocked", chat.name);
+          infoPanel.classList.remove("open");
+        }
+      };
+      $("clearChatBtn").onclick = () => {
+        if (confirm("Clear all messages?")) { chat.messages = []; render(); infoPanel.classList.remove("open"); }
+      };
+      const membersBtn = $("groupMembersBtn");
+      if (membersBtn) membersBtn.onclick = () => openGroupMembers(chat);
+      const inviteBtn = $("inviteLinkBtn");
+      if (inviteBtn) inviteBtn.onclick = () => {
+        const link = "https://chat.whatsapp.com/" + Math.random().toString(36).slice(2, 12);
+        navigator.clipboard?.writeText(link);
+        toast("msg", "Invite link copied", link);
+      };
+    }
+
+    /* =========================================================
+       MESSAGE RENDER ACTIONS (context menu etc.)
+       ========================================================= */
+    function showCtxMenu(e, msgId) {
+      const chat = getActive(); if (!chat) return;
+      const m = findMsg(chat, msgId); if (!m) return;
+      state.ctxMsg = msgId;
+
+      const reactionRow = `<div class="reactions-row">
+    ${["👍", "❤️", "😂", "😮", "😢", "🙏"].map(em => `<button data-ctx="react" data-em="${em}">${em}</button>`).join("")}
+  </div><div class="sep"></div>`;
+
+      const canEdit = m.out && m.type !== "text" ? false : m.out;
+      const items = [
+        `<button data-ctx="reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 6 6v5"/></svg>Reply</button>`,
+        `<button data-ctx="forward"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0-6 6v5"/></svg>Forward</button>`,
+        `<button data-ctx="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button>`,
+        m.type === "text" ? `<button data-ctx="translate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12M10 3v2c0 5-2 8-6 10"/><path d="M6 15c3-1 5-4 6-8"/><path d="m13 21 4-11 4 11M14.5 17h5"/></svg>Translate <span class="ai-badge" style="margin-left:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3 14 9l6 1-4.5 4.5L17 21l-5-3-5 3 1.5-6.5L4 10l6-1z"/></svg>AI</span></button>` : "",
+        m.type === "text" && canEdit ? `<button data-ctx="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 0 1 4 4L7 21H3v-4z"/></svg>Edit</button>` : "",
+        `<button data-ctx="pin"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 4v5l3 3v2h-5v6l-1 2-1-2v-6H5v-2l3-3V4z"/></svg>${m.pinned ? "Unpin" : "Pin"}</button>`,
+        `<button data-ctx="star"><svg viewBox="0 0 24 24" fill="${m.starred ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.6 6.6L21 10l-5 4.5L17.5 21 12 17.5 6.5 21 8 14.5 3 10l6.4-.4z"/></svg>${m.starred ? "Unstar" : "Star"}</button>`,
+        `<div class="sep"></div>`,
+        `<button data-ctx="delete" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete</button>`
+      ].join("");
+
+      ctxMenu.innerHTML = reactionRow + items;
+      const x = Math.min(e.clientX, window.innerWidth - 230);
+      const y = Math.min(e.clientY, window.innerHeight - 420);
+      ctxMenu.style.left = x + "px";
+      ctxMenu.style.top = Math.max(10, y) + "px";
+      ctxMenu.classList.add("open");
+
+      ctxMenu.querySelectorAll("button[data-ctx]").forEach(b => {
+        b.onclick = () => { handleCtx(b.dataset.ctx, b.dataset.em); };
+      });
+    }
+    function hideCtx() { ctxMenu.classList.remove("open"); state.ctxMsg = null; }
+
+    function handleCtx(action, em) {
+      const chat = getActive(); if (!chat) return;
+      const m = findMsg(chat, state.ctxMsg); if (!m) { hideCtx(); return; }
+      hideCtx();
+
+      if (action === "react") {
+        m.reactions = m.reactions || {};
+        const users = m.reactions[em] || [];
+        const i = users.indexOf("You");
+        if (i >= 0) { users.splice(i, 1); if (!users.length) delete m.reactions[em]; }
+        else users.push("You");
+        if (users.length) m.reactions[em] = users;
+        renderMessages(false); return;
+      }
+      if (action === "reply") {
+        state.replyTo = m.id; state.editing = null;
+        showReplyPreview(); inputEl.focus(); return;
+      }
+      if (action === "forward") { openForwardModal(m); return; }
+      if (action === "copy") {
+        const txt = m.text || "[media message]";
+        navigator.clipboard?.writeText(txt);
+        toast("msg", "Copied", txt.slice(0, 60)); return;
+      }
+      if (action === "translate") {
+        const t = fakeTranslate(m.text);
+        toast("msg", "Translated → Spanish", t.text, 5000); return;
+      }
+      if (action === "edit") {
+        state.editing = m.id; state.replyTo = null;
+        inputEl.value = m.text; showEditPreview(); inputEl.focus(); return;
+      }
+      if (action === "pin") { m.pinned = !m.pinned; toast("msg", m.pinned ? "Pinned" : "Unpinned", m.text?.slice(0, 40)); renderMessages(false); return; }
+      if (action === "star") { m.starred = !m.starred; toast("msg", m.starred ? "Starred" : "Unstarred", m.text?.slice(0, 40)); renderMessages(false); return; }
+      if (action === "delete") {
+        if (confirm(m.out ? "Delete for everyone?" : "Delete message?")) {
+          m.deleted = true;
+          if (m.out) { chat.messages = chat.messages.filter(x => x.id !== m.id); }
+          else { m.text = "This message was deleted"; m.type = "text"; }
+          renderMessages(false); renderChatList();
+        }
+      }
+    }
+
+    /* Reply/Edit previews */
+    function showReplyPreview() {
+      const chat = getActive(); const m = findMsg(chat, state.replyTo);
+      if (!m) return hideReplyPreview();
+      const who = m.out ? "You" : (m.from || chat.name);
+      $("replyPreview").classList.remove("hidden");
+      $("replyPreview").innerHTML = `
+    <div class="info"><div class="who">Replying to ${esc(who)}</div><div class="txt">${esc(m.text || "[media]")}</div></div>
+    <button class="icon-btn sm" id="cancelReply">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>`;
+      $("cancelReply").onclick = hideReplyPreview;
+    }
+    function hideReplyPreview() { state.replyTo = null; $("replyPreview").classList.add("hidden"); }
+
+    function showEditPreview() {
+      const chat = getActive(); const m = findMsg(chat, state.editing);
+      if (!m) return hideEditPreview();
+      $("editPreview").classList.remove("hidden");
+      $("editPreview").innerHTML = `
+    <div class="info"><div class="who">Editing message</div><div class="txt">${esc(m.text)}</div></div>
+    <button class="icon-btn sm" id="cancelEdit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>`;
+      $("cancelEdit").onclick = () => { hideEditPreview(); inputEl.value = ""; updateSendState(); };
+    }
+    function hideEditPreview() { state.editing = null; $("editPreview").classList.add("hidden"); }
+
+    /* =========================================================
+       SEND / SIMULATE
+       ========================================================= */
+    function sendMessage() {
+      const chat = getActive(); if (!chat) return;
+
+      // Editing mode
+      if (state.editing) {
+        const m = findMsg(chat, state.editing);
+        if (m && inputEl.value.trim()) {
+          m.text = inputEl.value.trim(); m.edited = true;
+        }
+        hideEditPreview(); inputEl.value = ""; updateSendState(); renderMessages(); renderChatList(); return;
+      }
+
+      const text = inputEl.value.trim();
+      const att = state.attachment;
+      if (!text && !att) return;
+
+      const msg = {
+        id: uid(), time: nowTime(), out: true, status: "sent",
+        text: text || "", type: att ? att.type : "text", replyTo: state.replyTo
+      };
+
+      if (att) {
+        if (att.type === "image" || att.type === "video") msg.media = att.data;
+        if (att.type === "doc") msg.media = att.file;
+        if (att.type === "voice") msg.media = { duration: att.duration };
+        if (att.type === "location") msg.media = { label: att.label };
+        if (att.type === "contact") msg.media = { name: att.name, phone: att.phone };
+        if (att.type === "poll") msg.media = { question: att.question, options: att.options.map(o => ({ text: o, votes: 0 })), myVote: null };
+      }
+
+      chat.messages.push(msg);
+      inputEl.value = "";
+      hideReplyPreview();
+      clearAttachment();
+      updateSendState();
+      renderMessages();
+      renderChatList();
+
+      // receipts
+      setTimeout(() => { if (msg.status === "sent") { msg.status = "delivered"; if (state.activeId === chat.id) renderMessages(false); } }, 700);
+
+      // attachment counters / replies
+      if (att && att.type !== "poll" && att.type !== "voice") simulateReply(chat.id, att.type + " received!");
+      else if (att && att.type === "voice") simulateReply(chat.id, "voice message received");
+      else simulateReply(chat.id, text);
+    }
+
+    function simulateReply(chatId, userText) {
+      replyTimers.forEach(clearTimeout); replyTimers = [];
+      const chat = state.chats.find(c => c.id === chatId); if (!chat) return;
+
+      const replyText = generateReply(userText);
+      const thinkDelay = 450 + Math.random() * 600;
+      const typeDuration = Math.min(2600, Math.max(700, replyText.length * 45));
+
+      replyTimers.push(setTimeout(() => {
+        state.typingIn = chatId;
+        chat.typing = true;
+        if (state.activeId === chatId) { renderHeader(); renderMessages(); }
+        renderChatList();
+      }, thinkDelay));
+
+      replyTimers.push(setTimeout(() => {
+        state.typingIn = null; chat.typing = false;
+        chat.messages.forEach(m => { if (m.out) m.status = "read"; });
+        chat.messages.push({ id: uid(), text: replyText, time: nowTime(), out: false, from: chat.type === "group" ? "Ravi" : undefined });
+
+        if (state.activeId === chatId) {
+          renderHeader(); renderMessages();
+          showSmartReplies(replyText);
+        } else {
+          chat.unread = (chat.unread || 0) + 1;
+          if (!chat.muted) toast("msg", chat.name, replyText);
+        }
+        renderChatList();
+      }, thinkDelay + typeDuration));
+    }
+
+    function showSmartReplies(lastText) {
+      const sr = smartReplies(lastText);
+      const wrap = $("smartReplies");
+      wrap.classList.remove("hidden");
+      wrap.innerHTML = sr.map(t => `<div class="sr" data-sr="${esc(t)}">${esc(t)}</div>`).join("")
+        + `<div class="sr ghost" data-sr="">Dismiss</div>`;
+      wrap.querySelectorAll("[data-sr]").forEach(el => {
+        el.onclick = () => { const v = el.dataset.sr; wrap.classList.add("hidden"); if (v) { inputEl.value = v; sendMessage(); } };
+      });
+      setTimeout(() => wrap.classList.add("hidden"), 12000);
+    }
+
+    function updateSendState() {
+      const hasText = inputEl.value.trim().length > 0;
+      const hasAtt = !!state.attachment;
+      sendBtn.classList.toggle("active", hasText || hasAtt);
+      sendBtn.querySelector("svg").innerHTML = (hasText || hasAtt)
+        ? `<path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/>`
+        : `<rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    }
+
+    /* =========================================================
+       ATTACHMENTS
+       ========================================================= */
+    function clearAttachment() { state.attachment = null; $("attachPreview").classList.add("hidden"); $("attachPreview").innerHTML = ""; }
+
+    function setAttachment(a) {
+      state.attachment = a;
+      const wrap = $("attachPreview"); wrap.classList.remove("hidden");
+      let preview = "";
+      if (a.type === "image") preview = `<img src="${a.data}"/><div class="info"><div class="n">Photo</div><div class="s">Ready to send</div></div>`;
+      if (a.type === "video") preview = `<video src="${a.data}"></video><div class="info"><div class="n">Video</div><div class="s">Ready to send</div></div>`;
+      if (a.type === "doc") preview = `<div class="doc-icon">PDF</div><div class="info"><div class="n">${esc(a.file.name)}</div><div class="s">${esc(a.file.size)}</div></div>`;
+      if (a.type === "location") preview = `<div style="width:56px;height:56px;background:#c8e6c9;border-radius:6px;display:grid;place-items:center;font-size:24px">📍</div><div class="info"><div class="n">Location</div><div class="s">${esc(a.label)}</div></div>`;
+      if (a.type === "contact") preview = `<div class="avatar" style="--c:#00a884">${esc(initials(a.name))}</div><div class="info"><div class="n">${esc(a.name)}</div><div class="s">${esc(a.phone)}</div></div>`;
+      if (a.type === "voice") preview = `<div style="width:56px;height:56px;background:var(--accent);border-radius:50%;display:grid;place-items:center;color:#fff;font-size:24px">🎤</div><div class="info"><div class="n">Voice message</div><div class="s">${a.duration}</div></div>`;
+      if (a.type === "poll") preview = `<div style="width:56px;height:56px;background:#ffbc38;border-radius:6px;display:grid;place-items:center;font-size:24px">📊</div><div class="info"><div class="n">${esc(a.question)}</div><div class="s">${a.options.length} options</div></div>`;
+
+      wrap.innerHTML = preview + `<button class="icon-btn" id="attachCancel" style="margin-left:auto">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
+      $("attachCancel").onclick = clearAttachment;
+      updateSendState();
+    }
+
+    /* File handlers */
+    $("filePhoto").addEventListener("change", (e) => {
+      const files = [...e.target.files]; if (!files.length) return;
+      const f = files[0];
+      const reader = new FileReader();
+      reader.onload = () => setAttachment({ type: f.type.startsWith("video") ? "video" : "image", data: reader.result });
+      reader.readAsDataURL(f);
+      e.target.value = "";
+    });
+    $("fileCam").addEventListener("change", (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => setAttachment({ type: "image", data: reader.result });
+      reader.readAsDataURL(f);
+      e.target.value = "";
+    });
+    $("fileDoc").addEventListener("change", (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      setAttachment({ type: "doc", file: { name: f.name, size: (f.size / 1024).toFixed(1) + " KB" } });
+      e.target.value = "";
+    });
+
+    /* =========================================================
+       POLLS
+       ========================================================= */
+    function openPollModal() {
+      openModal({
+        title: "Create poll", body: `
+      <label class="field"><span class="lbl">Question</span>
+        <input id="pollQ" placeholder="Ask a question" maxlength="100"/></label>
+      <label class="field"><span class="lbl">Option 1</span><input id="pollO1" maxlength="60"/></label>
+      <label class="field"><span class="lbl">Option 2</span><input id="pollO2" maxlength="60"/></label>
+      <label class="field"><span class="lbl">Option 3 (optional)</span><input id="pollO3" maxlength="60"/></label>
+    `,
+        actions: `
+      <button class="btn ghost" data-close>Cancel</button>
+      <button class="btn primary" id="pollSend">Send</button>`
+      });
+      $("pollSend").onclick = () => {
+        const q = $("pollQ").value.trim();
+        const opts = ["pollO1", "pollO2", "pollO3"].map(id => $(id).value.trim()).filter(Boolean);
+        if (!q || opts.length < 2) return toast("err", "Poll needs question + 2 options");
+        closeModal();
+        setAttachment({ type: "poll", question: q, options: opts });
+      };
+    }
+
+    /* =========================================================
+       CALLS
+       ========================================================= */
+    function startCall(chatId, video) {
+      const chat = state.chats.find(c => c.id === chatId) || state.calls.find(c => c.id === chatId);
+      if (!chat) return;
+      const name = chat.name, color = chat.color;
+      $("callAvatar").style.setProperty("--c", color);
+      $("callAvatar").textContent = initials(name);
+      $("callName").textContent = name;
+      $("callStatus").textContent = "Calling…";
+      $("callTimer").textContent = "";
+      $("callScreen").classList.add("open");
+      state.call = { chatId, video, start: null, muted: false, cam: false, speaker: true };
+
+      setTimeout(() => {
+        if (!state.call) return;
+        $("callStatus").textContent = "Ringing…";
+      }, 1200);
+
+      setTimeout(() => {
+        if (!state.call) return;
+        state.call.start = Date.now();
+        $("callStatus").textContent = "Connected";
+        state.call.tick = setInterval(() => {
+          if (!state.call || !state.call.start) return;
+          const s = Math.floor((Date.now() - state.call.start) / 1000);
+          const mm = String(Math.floor(s / 60)).padStart(2, "0");
+          const ss = String(s % 60).padStart(2, "0");
+          $("callTimer").textContent = mm + ":" + ss;
+        }, 1000);
+      }, 3200);
+
+      toast("call", video ? "Video call" : "Voice call", "Connecting to " + name);
+    }
+    function endCall() {
+      if (state.call) { clearInterval(state.call.tick); }
+      state.call = null;
+      $("callScreen").classList.remove("open");
+      $("callTimer").textContent = "";
+    }
+
+    /* =========================================================
+       STATUS
+       ========================================================= */
+    function openStatusComposer() {
+      openModal({
+        title: "Add status", body: `
+      <label class="field"><span class="lbl">Text</span>
+        <textarea id="stText" maxlength="200" placeholder="What's on your mind?"></textarea></label>
+    `,
+        actions: `<button class="btn ghost" data-close>Cancel</button>
+              <button class="btn primary" id="stPost">Post</button>`
+      });
+      $("stPost").onclick = () => {
+        const t = $("stText").value.trim(); if (!t) return;
+        state.statuses.unshift({ id: uid(), name: "You", color: ME.color, time: "Just now", type: "text", text: t, seen: true, reactions: [] });
+        closeModal(); renderStatusList(); toast("msg", "Status posted", "Visible for 24 hours");
+      };
+    }
+
+    function viewStatus(id) {
+      const s = state.statuses.find(x => x.id === id); if (!s) return;
+      s.seen = true;
+      const el = document.createElement("div");
+      el.className = "modal-root open";
+      el.style.background = "rgba(0,0,0,.92)";
+      el.innerHTML = `
+    <div style="width:min(420px,92vw);background:#1a1a1a;border-radius:14px;overflow:hidden;color:#fff;display:flex;flex-direction:column">
+      <div style="padding:12px 16px;background:#000;display:flex;align-items:center;gap:12px">
+        <div class="avatar" style="--c:${s.color}">${esc(initials(s.name))}</div>
+        <div style="flex:1"><div style="font-size:15px">${esc(s.name)}</div>
+          <div style="font-size:12px;opacity:.7">${esc(s.time)}</div></div>
+        <button class="icon-btn" id="stClose" style="color:#fff">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div style="padding:80px 24px;text-align:center;font-size:20px;min-height:280px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#075e54,#128c7e)">
+        ${esc(s.text)}
+      </div>
+      <div style="padding:12px 16px;display:flex;gap:10px;justify-content:center;background:#000">
+        ${["❤️", "😂", "😮", "🙏"].map(e => `<button class="icon-btn" data-streact="${e}" style="font-size:22px;color:#fff">${e}</button>`).join("")}
+      </div>
+    </div>`;
+      document.body.appendChild(el);
+      el.querySelector("#stClose").onclick = () => { el.remove(); renderStatusList(); };
+      el.querySelectorAll("[data-streact]").forEach(b => b.onclick = () => {
+        s.reactions.push(b.dataset.streact);
+        toast("msg", "Reaction sent", b.dataset.streact + " to " + s.name);
+        el.remove(); renderStatusList();
+      });
+    }
+
+    /* =========================================================
+       MODAL SYSTEM
+       ========================================================= */
+    function openModal({ title, sub, body, actions, wide }) {
+      modalRoot.innerHTML = `
+    <div class="modal" style="${wide ? "max-width:720px" : ""}">
+      <div class="modal-head">
+        <div style="flex:1"><div class="title">${esc(title)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ""}</div>
+        <button class="icon-btn" data-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">${body}</div>
+      <div class="modal-foot">${actions || `<button class="btn primary" data-close>Close</button>`}</div>
+    </div>`;
+      modalRoot.classList.add("open");
+      modalRoot.querySelectorAll("[data-close]").forEach(b => b.onclick = closeModal);
+      modalRoot.onclick = (e) => { if (e.target === modalRoot) closeModal(); };
+    }
+    function closeModal() { modalRoot.classList.remove("open"); modalRoot.innerHTML = ""; }
+
+    /* Forward modal */
+    function openForwardModal(msg) {
+      const list = state.chats.map(c => `
+    <div class="member-row" data-fwd="${c.id}">
+      <div class="avatar" style="--c:${c.color}">${esc(initials(c.name))}</div>
+      <div class="grow"><div class="n">${esc(c.name)}</div>
+        <div class="s">${c.type === "group" ? "Group" : "Contact"}</div></div>
+    </div>`).join("");
+      openModal({ title: "Forward message", body: list, actions: `<button class="btn ghost" data-close>Cancel</button>` });
+      modalRoot.querySelectorAll("[data-fwd]").forEach(el => {
+        el.onclick = () => {
+          const target = state.chats.find(c => c.id === Number(el.dataset.fwd));
+          target.messages.push({
+            id: uid(), text: msg.text, time: nowTime(), out: true, status: "sent",
+            type: msg.type, media: msg.media, forwarded: true
+          });
+          closeModal();
+          toast("msg", "Forwarded", "to " + target.name);
+          renderChatList();
+          if (target.id === state.activeId) renderMessages();
+        };
+      });
+    }
+
+    /* Group members manager */
+    function openGroupMembers(chat) {
+      const list = (chat.members || []).map(m => `
+    <div class="member-row">
+      <div class="avatar" style="--c:${"#" + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, "0")}">${esc(initials(m))}</div>
+      <div class="grow"><div class="n">${esc(m)}</div><div class="s">${m === "You" ? "You" : ""}</div></div>
+      ${m !== "You" ? `<button class="icon-btn sm" data-remove="${esc(m)}" style="color:var(--danger)">✕</button>` : ""}
+    </div>`).join("");
+      openModal({
+        title: "Group members", sub: chat.name, body: list,
+        actions: `<button class="btn ghost" data-close>Close</button>
+             <button class="btn primary" id="addMemberBtn">Add member</button>` });
+      $("addMemberBtn").onclick = () => {
+        const n = prompt("Name of new member:"); if (!n) return;
+        chat.members.push(n.trim());
+        openGroupMembers(chat); renderHeader();
+      };
+      modalRoot.querySelectorAll("[data-remove]").forEach(b => {
+        b.onclick = () => {
+          chat.members = chat.members.filter(m => m !== b.dataset.remove);
+          openGroupMembers(chat); renderHeader();
+        };
+      });
+    }
+
+    /* Create group */
+    function openCreateGroup() {
+      const contacts = state.chats.filter(c => c.type === "dm").map(c => `
+    <div class="member-row" data-mem="${c.id}">
+      <div class="avatar" style="--c:${c.color}">${esc(initials(c.name))}</div>
+      <div class="grow"><div class="n">${esc(c.name)}</div>
+        <div class="s">${esc(c.phone || "")}</div></div>
+      <div class="cb"></div>
+    </div>`).join("");
+      openModal({
+        title: "New group",
+        body: `
+      <label class="field"><span class="lbl">Group name</span>
+        <input id="gName" placeholder="e.g. Weekend Plans"/></label>
+      <label class="field"><span class="lbl">Description (optional)</span>
+        <input id="gDesc" placeholder="What's this group about?"/></label>
+      <div style="font-size:13px;color:var(--accent-dark);margin:14px 0 6px">Add participants</div>
+      ${contacts}`,
+        actions: `<button class="btn ghost" data-close>Cancel</button>
+             <button class="btn primary" id="gCreate">Create</button>`
+      });
+      const sel = new Set();
+      modalRoot.querySelectorAll("[data-mem]").forEach(el => {
+        el.onclick = () => {
+          const id = Number(el.dataset.mem);
+          if (sel.has(id)) { sel.delete(id); el.classList.remove("selected"); }
+          else { sel.add(id); el.classList.add("selected"); }
+        };
+      });
+      $("gCreate").onclick = () => {
+        const name = $("gName").value.trim(); if (!name) return toast("err", "Group needs a name");
+        const members = ["You", ...[...sel].map(id => state.chats.find(c => c.id === id).name)];
+        const newChat = {
+          id: uid(), name, color: "#" + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, "0"),
+          about: members.length + " members", unread: 0, type: "group", members,
+          description: $("gDesc").value.trim(), pinned: false, archived: false, muted: false,
+          e2e: true, disappearing: false, messages: []
+        };
+        state.chats.unshift(newChat);
+        closeModal(); openChat(newChat.id); renderChatList();
+        toast("msg", "Group created", name);
+      };
+    }
+
+    /* AI: Summarize chat */
+    function openSummary() {
+      const chat = getActive(); if (!chat) return;
+      const summary = summarize(chat.messages);
+      const sent = analyzeSentiment(chat.messages);
+      openModal({
+        title: "Chat summary", sub: `${chat.messages.length} messages · Last 24h`,
+        body: `
+      <div style="margin-bottom:16px">
+        <span class="ai-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3 14 9l6 1-4.5 4.5L17 21l-5-3-5 3 1.5-6.5L4 10l6-1z"/></svg>AI Summary</span>
+      </div>
+      <div style="white-space:pre-wrap;line-height:1.7;font-size:14.5px">${esc(summary)}</div>
+      <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Overall sentiment: <b style="color:var(--text)">${sent.label}</b></div>
+        <div class="sentiment-bar">
+          <div class="pos" style="width:${sent.pp}%"></div>
+          <div class="neu" style="width:${sent.neu}%"></div>
+          <div class="neg" style="width:${sent.nn}%"></div>
+        </div>
+      </div>`,
+        actions: `<button class="btn primary" data-close>Close</button>`
+      });
+    }
+
+    /* Translate chat */
+    function translateChat() {
+      const chat = getActive(); if (!chat) return;
+      const last = chat.messages.slice(-3).map(m => `${m.out ? "You" : (m.from || chat.name)}: ${fakeTranslate(m.text).text}`).join("\n");
+      openModal({
+        title: "Translate → Spanish", sub: "Last 3 messages",
+        body: `<div style="white-space:pre-wrap;line-height:1.8;font-size:14.5px">${esc(last)}</div>`,
+        actions: `<button class="btn primary" data-close>Close</button>`
+      });
+    }
+
+    /* =========================================================
+       OPEN CHAT / TABS / EVENTS
+       ========================================================= */
+    function openChat(id) {
+      state.activeId = id;
+      const chat = getActive(); if (chat) chat.unread = 0;
+      state.chatQuery = ""; state.replyTo = null; state.editing = null; state.attachment = null;
+      $("chatSearchBar").classList.add("hidden");
+      $("attachPreview").classList.add("hidden");
+      $("editPreview").classList.add("hidden");
+      $("replyPreview").classList.add("hidden");
+      appEl.classList.add("mobile-open");
+      emojiBar.classList.remove("open");
+      render();
+      setTimeout(() => inputEl.focus(), 60);
+    }
+
+    /* Tab switching */
+    document.querySelectorAll(".tab").forEach(t => {
+      t.onclick = () => {
+        document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+        state.tab = t.dataset.tab;
+        const chatMode = state.tab === "chats";
+        $("searchWrap").style.display = chatMode ? "" : "none";
+        $("filterRow").style.display = chatMode ? "" : "none";
+        if (!chatMode) appEl.classList.remove("mobile-open");
+        render();
+      };
+    });
+
+    /* Filter chips */
+    document.querySelectorAll(".chip").forEach(c => {
+      c.onclick = () => {
+        document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+        c.classList.add("active");
+        state.filter = c.dataset.filter;
+        renderChatList();
+      };
+    });
+
+    chatListEl.addEventListener("click", (e) => {
+      const item = e.target.closest(".chat-item");
+      if (item) openChat(Number(item.dataset.id));
+    });
+
+    $("searchInput").addEventListener("input", (e) => { state.query = e.target.value; renderChatList(); });
+
+    /* Right-click on message → context menu */
+    messagesEl.addEventListener("contextmenu", (e) => {
+      const msgEl = e.target.closest(".msg"); if (!msgEl) return;
+      e.preventDefault();
+      showCtxMenu(e, Number(msgEl.dataset.mid));
+    });
+
+    /* Long-press on touch */
+    let pressTimer;
+    messagesEl.addEventListener("touchstart", (e) => {
+      const msgEl = e.target.closest(".msg"); if (!msgEl) return;
+      pressTimer = setTimeout(() => {
+        const t = e.touches[0];
+        showCtxMenu({ clientX: t.clientX, clientY: t.clientY }, Number(msgEl.dataset.mid));
+        if (navigator.vibrate) navigator.vibrate(30);
+      }, 500);
+    });
+    ["touchend", "touchmove", "touchcancel"].forEach(ev => messagesEl.addEventListener(ev, () => clearTimeout(pressTimer)));
+
+    /* Click on reactions or poll options */
+    messagesEl.addEventListener("click", (e) => {
+      const react = e.target.closest(".reactions .r");
+      if (react) {
+        const m = findMsg(getActive(), Number(react.dataset.react));
+        if (m && m.reactions && m.reactions[react.dataset.em]) {
+          const arr = m.reactions[react.dataset.em];
+          const i = arr.indexOf("You");
+          if (i >= 0) arr.splice(i, 1); else arr.push("You");
+          if (!arr.length) delete m.reactions[react.dataset.em];
+          renderMessages(false);
+        }
+        return;
+      }
+      const opt = e.target.closest(".opt[data-poll]");
+      if (opt) {
+        const m = findMsg(getActive(), Number(opt.dataset.poll));
+        const idx = Number(opt.dataset.opt);
+        if (m && m.media && m.media.myVote !== idx) {
+          m.media.options.forEach((o, i) => { if (i === idx) o.votes = (o.votes || 0) + 1; else if (o.votes > 0) o.votes--; });
+          m.media.myVote = idx;
+          renderMessages(false);
+        }
+        return;
+      }
+      const voice = e.target.closest("[data-voice]");
+      if (voice) {
+        voice.classList.toggle("playing");
+        return;
+      }
+      const jump = e.target.closest("[data-jump]");
+      if (jump) {
+        const el = messagesEl.querySelector(`[data-mid="${jump.dataset.jump}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.querySelector(".bubble").style.transition = "outline .2s";
+          el.querySelector(".bubble").style.outline = "2px solid var(--accent)";
+          setTimeout(() => el.querySelector(".bubble").style.outline = "", 1200);
+        }
+        return;
+      }
+    });
+
+    /* Close context menu on outside click */
+    document.addEventListener("click", (e) => { if (!ctxMenu.contains(e.target)) hideCtx(); });
+    document.addEventListener("scroll", hideCtx, true);
+
+    /* Composer events */
+    inputEl.addEventListener("input", () => { updateSendState(); if (state.chatQuery) return; });
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      if (e.key === "Escape") { hideReplyPreview(); hideEditPreview(); inputEl.value = ""; updateSendState(); }
+    });
+    sendBtn.addEventListener("click", () => sendMessage());
+
+    /* Emoji bar */
+    $("emojiBtn").addEventListener("click", () => {
+      emojiBar.classList.toggle("open");
+      if (emojiBar.classList.contains("open")) renderEmojiTab("emojis");
+    });
+    document.querySelectorAll(".emoji-tabs .et").forEach(t => {
+      t.onclick = () => {
+        document.querySelectorAll(".emoji-tabs .et").forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+        renderEmojiTab(t.dataset.et);
+      };
+    });
+    function renderEmojiTab(tab) {
+      const grid = $("emojiGrid");
+      grid.className = "emoji-grid " + tab;
+      const arr = tab === "emojis" ? EMOJIS_LIST : tab === "stickers" ? STICKERS : GIFS;
+      grid.innerHTML = arr.map(x => `<button>${x}</button>`).join("");
+      grid.querySelectorAll("button").forEach(b => {
+        b.onclick = () => {
+          if (tab === "gifs") {
+            // Insert as a simulated GIF message
+            const chat = getActive(); if (!chat) return;
+            chat.messages.push({
+              id: uid(), time: nowTime(), out: true, status: "sent", type: "image",
+              media: `data:image/svg+xml;utf8,${encodeURIComponent(
+                `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200">
+              <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ff9a9e"/><stop offset="1" stop-color="#a1c4fd"/>
+              </linearGradient></defs>
+              <rect width="100%" height="100%" fill="url(#g)"/>
+              <text x="50%" y="52%" font-size="34" font-family="Arial" fill="#fff"
+                text-anchor="middle" font-weight="700">${esc(b.textContent)}</text>
+              <animate attributeName="opacity" values="1;.7;1" dur="1.5s" repeatCount="indefinite"/>
+            </svg>`)}`,
+              text: ""
+            });
+            renderMessages(); renderChatList();
+            emojiBar.classList.remove("open");
+            simulateReply(chat.id, "sent a GIF");
+          } else {
+            inputEl.value += b.textContent;
+            updateSendState();
+            inputEl.focus();
+          }
+        };
+      });
+    }
+
+    /* Attach popover */
+    $("attachBtn").addEventListener("click", (e) => { e.stopPropagation(); $("attachPopover").classList.toggle("open"); });
+    document.addEventListener("click", () => { $("attachPopover").classList.remove("open"); });
+    $("attachPopover").addEventListener("click", (e) => e.stopPropagation());
+    document.querySelectorAll("[data-attach]").forEach(b => {
+      b.onclick = () => {
+        const k = b.dataset.attach;
+        $("attachPopover").classList.remove("open");
+        if (k === "photo") $("filePhoto").click();
+        else if (k === "document") $("fileDoc").click();
+        else if (k === "camera") $("fileCam").click();
+        else if (k === "contact") {
+          const n = prompt("Contact name:", "Rahul Sharma"); if (!n) return;
+          const p = prompt("Phone:", "+91 98765 00000") || "+91 98765 00000";
+          setAttachment({ type: "contact", name: n, phone: p });
+        }
+        else if (k === "location") {
+          setAttachment({ type: "location", label: "Current location" });
+        }
+        else if (k === "poll") openPollModal();
+      };
+    });
+
+    /* Mic → voice message */
+    $("micBtn").addEventListener("click", () => {
+      if (state.recordingVoice) {
+        // stop
+        state.recordingVoice = false;
+        $("micBtn").classList.remove("active");
+        const dur = state.recordStart ? Math.max(1, Math.round((Date.now() - state.recordStart) / 1000)) : 3;
+        setAttachment({ type: "voice", duration: dur + "s" });
+        toast("msg", "Voice message ready", dur + "s · tap send");
+        return;
+      }
+      state.recordingVoice = true;
+      state.recordStart = Date.now();
+      $("micBtn").classList.add("active");
+      toast("warn", "Recording…", "Tap mic again to stop", 2500);
+      setTimeout(() => {
+        if (state.recordingVoice) {
+          state.recordingVoice = false;
+          $("micBtn").classList.remove("active");
+          setAttachment({ type: "voice", duration: "3s" });
+        }
+      }, 3000);
+    });
+
+    /* Header actions */
+    $("voiceCallBtn").onclick = () => { const c = getActive(); if (c) startCall(c.id, false); };
+    $("videoCallBtn").onclick = () => { const c = getActive(); if (c) startCall(c.id, true); };
+    $("infoBtn").onclick = () => openInfo();
+    $("infoClose").onclick = () => infoPanel.classList.remove("open");
+    $("backBtn").onclick = () => appEl.classList.remove("mobile-open");
+
+    /* Chat search */
+    $("chatSearchBtn").onclick = () => {
+      const bar = $("chatSearchBar");
+      bar.classList.toggle("hidden");
+      if (!bar.classList.contains("hidden")) $("chatSearchInput").focus();
+      else { state.chatQuery = ""; renderMessages(); }
+    };
+    $("chatSearchClose").onclick = () => { $("chatSearchBar").classList.add("hidden"); state.chatQuery = ""; renderMessages(); };
+    $("chatSearchInput").addEventListener("input", (e) => { state.chatQuery = e.target.value.trim(); renderMessages(false); });
+
+    /* header menu → AI actions */
+    $("headerWho").onclick = () => openInfo();
+
+    /* Sidebar buttons */
+    $("newChatBtn").onclick = () => {
+      const opts = `<div style="display:flex;flex-direction:column;gap:8px">
+    <button class="btn primary" id="newGroupBtn" style="justify-content:center">New group</button>
+    <button class="btn ghost" id="newStatusBtn">Create status</button>
+    <button class="btn ghost" id="summarizeBtn">AI: Summarize current chat</button>
+    <button class="btn ghost" id="translateChatBtn">AI: Translate last messages</button>
+  </div>`;
+      openModal({ title: "Start something new", body: opts, actions: `<button class="btn ghost" data-close>Close</button>` });
+      $("newGroupBtn").onclick = () => { closeModal(); openCreateGroup(); };
+      $("newStatusBtn").onclick = () => { closeModal(); openStatusComposer(); };
+      $("summarizeBtn").onclick = () => { closeModal(); openSummary(); };
+      $("translateChatBtn").onclick = () => { closeModal(); translateChat(); };
+    };
+
+    $("menuBtn").onclick = () => {
+      openModal({
+        title: "Settings", body: `
+    <div class="panel-action" data-set="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="grow">Profile</span><span style="color:var(--muted);font-size:13px">${esc(ME.name)}</span></div>
+    <div class="panel-action" data-set="theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <span class="grow">Theme</span><span style="color:var(--muted);font-size:13px">${document.body.classList.contains("dark") ? "Dark" : "Light"}</span></div>
+    <div class="panel-action" data-set="privacy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <span class="grow">Privacy & Security</span></div>
+    <div class="panel-action" data-set="linked">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
+      <span class="grow">Linked devices</span></div>
+    <div class="panel-action" data-set="backup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+      <span class="grow">Backup chats</span></div>
+    <div class="panel-action" data-set="stars">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.6 6.6L21 10l-5 4.5L17.5 21 12 17.5 6.5 21 8 14.5 3 10l6.4-.4z"/></svg>
+      <span class="grow">Starred messages</span></div>
+    <div class="panel-action" data-set="ai" style="color:var(--accent-dark)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3 14 9l6 1-4.5 4.5L17 21l-5-3-5 3 1.5-6.5L4 10l6-1z"/></svg>
+      <span class="grow">AI Features</span><span style="color:var(--muted);font-size:12px">Active</span></div>
+  `, actions: `<button class="btn ghost" data-close>Close</button>`
+      });
+
+      modalRoot.querySelectorAll("[data-set]").forEach(el => {
+        el.onclick = () => {
+          const k = el.dataset.set; closeModal();
+          if (k === "theme") { document.body.classList.toggle("dark"); return; }
+          if (k === "profile") {
+            openModal({
+              title: "Profile", body: `
+          <label class="field"><span class="lbl">Name</span><input id="pfName" value="${esc(ME.name)}"/></label>
+          <label class="field"><span class="lbl">About</span><input id="pfAbout" value="${esc(ME.about)}"/></label>
+          <label class="field"><span class="lbl">Phone</span><input id="pfPhone" value="${esc(ME.phone)}" disabled/></label>`,
+              actions: `<button class="btn ghost" data-close>Cancel</button>
+                   <button class="btn primary" id="pfSave">Save</button>` });
+            $("pfSave").onclick = () => {
+              ME.name = $("pfName").value.trim() || ME.name;
+              ME.about = $("pfAbout").value.trim() || ME.about;
+              $("myAvatar").textContent = initials(ME.name);
+              closeModal(); toast("msg", "Profile updated");
+            };
+            return;
+          }
+          if (k === "privacy") {
+            openModal({
+              title: "Privacy & Security", body: `
+          <div class="panel-action"><span class="grow">Read receipts</span><div class="badge-toggle on"></div></div>
+          <div class="panel-action"><span class="grow">Last seen</span><span style="color:var(--muted);font-size:13px">Contacts</span></div>
+          <div class="panel-action"><span class="grow">Profile photo</span><span style="color:var(--muted);font-size:13px">Contacts</span></div>
+          <div class="panel-action"><span class="grow">Two-step verification</span><div class="badge-toggle"></div></div>
+          <div class="panel-action"><span class="grow">App lock (biometric)</span><div class="badge-toggle"></div></div>
+          <div class="panel-action"><span class="grow">End-to-end encryption</span><span style="color:var(--accent);font-size:13px">On</span></div>
+        `, actions: `<button class="btn primary" data-close>Close</button>`
+            });
+            return;
+          }
+          if (k === "linked") {
+            openModal({
+              title: "Linked devices", body: `
+          <div class="panel-action"><span class="grow">This browser</span><span style="color:var(--accent);font-size:13px">Active</span></div>
+          <div class="panel-action"><span class="grow">iPhone 15</span><span style="color:var(--muted);font-size:13px">2h ago</span></div>
+          <div class="panel-action"><span class="grow">MacBook Pro</span><span style="color:var(--muted);font-size:13px">Yesterday</span></div>
+        `, actions: `<button class="btn primary" data-close>Close</button>`
+            });
+            return;
+          }
+          if (k === "backup") {
+            toast("msg", "Backup started", "This may take a few minutes");
+            return;
+          }
+          if (k === "stars") {
+            const chat = getActive();
+            const starred = chat ? chat.messages.filter(m => m.starred) : [];
+            openModal({
+              title: "Starred messages", sub: chat ? chat.name : "", body:
+                starred.length ? starred.map(m => `<div class="panel-action"><span class="grow">${esc(m.text || "[media]")}</span><span style="color:var(--muted);font-size:12px">${m.time}</span></div>`).join("")
+                  : `<div style="padding:20px;text-align:center;color:var(--muted)">No starred messages in this chat.</div>`,
+              actions: `<button class="btn primary" data-close>Close</button>`
+            });
+            return;
+          }
+          if (k === "ai") {
+            openModal({
+              title: "AI Features", body: `
+          <div class="panel-action"><span class="grow">Smart replies</span><div class="badge-toggle on"></div></div>
+          <div class="panel-action"><span class="grow">Contextual auto-reply</span><div class="badge-toggle on"></div></div>
+          <div class="panel-action"><span class="grow">Chat summarization</span><div class="badge-toggle on"></div></div>
+          <div class="panel-action"><span class="grow">Translation (EN → ES)</span><div class="badge-toggle on"></div></div>
+          <div class="panel-action"><span class="grow">Sentiment analysis</span><div class="badge-toggle on"></div></div>
+          <div class="panel-action"><span class="grow">Spam detection</span><div class="badge-toggle on"></div></div>
+          <div class="panel-action"><span class="grow">Voice-to-text</span><div class="badge-toggle"></div></div>
+        `, actions: `<button class="btn primary" data-close>Close</button>`
+            });
+            return;
+          }
+        };
+      });
+    };
+
+    $("themeBtn").onclick = () => document.body.classList.toggle("dark");
+    $("myAvatar").onclick = () => { $("menuBtn").click(); };
+
+    /* Call controls */
+    $("ctrlEnd").onclick = endCall;
+    $("ctrlMute").onclick = () => {
+      if (!state.call) return; state.call.muted = !state.call.muted;
+      $("ctrlMute").classList.toggle("off"); toast("warn", state.call.muted ? "Muted" : "Unmuted");
+    };
+    $("ctrlVideo").onclick = () => {
+      if (!state.call) return; state.call.cam = !state.call.cam;
+      $("ctrlVideo").classList.toggle("off"); toast("warn", state.call.cam ? "Camera on" : "Camera off");
+    };
+    $("ctrlSpeaker").onclick = () => {
+      if (!state.call) return; state.call.speaker = !state.call.speaker;
+      toast("warn", state.call.speaker ? "Speaker on" : "Speaker off");
+    };
+
+    /* Keyboard shortcuts */
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") { hideCtx(); closeModal(); if (state.call) endCall(); }
+    });
+
+    /* =========================================================
+       BOOT
+       ========================================================= */
+    render();
+    if (window.innerWidth > 760 && state.chats.length) openChat(state.chats[0].id);
+
+    /* welcome toast */
+    setTimeout(() => toast("msg", "Welcome to WhatsApp Web Pro",
+      "Right-click a message for reply, react, forward & AI tools."), 600);
+  </script>
+</body>
+
+</html>
